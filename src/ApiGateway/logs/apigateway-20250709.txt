@@ -1,0 +1,57 @@
+2025-07-09 12:47:04.992 +03:00 [INF] User profile is available. Using 'C:\Users\jerry\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-09 12:47:05.131 +03:00 [INF] Loading proxy data from config.
+2025-07-09 12:47:05.218 +03:00 [INF] Starting L-SalesPro API Gateway
+2025-07-09 12:47:05.477 +03:00 [INF] Now listening on: http://localhost:5000
+2025-07-09 12:47:05.480 +03:00 [INF] Now listening on: https://localhost:5009
+2025-07-09 12:47:05.485 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-09 12:47:05.489 +03:00 [INF] Hosting environment: Production
+2025-07-09 12:47:05.492 +03:00 [INF] Content root path: C:\Users\jerry\Desktop\leysco_c_sharp\app\src\ApiGateway
+2025-07-09 12:55:14.069 +03:00 [INF] User profile is available. Using 'C:\Users\jerry\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-09 12:55:14.183 +03:00 [INF] Loading proxy data from config.
+2025-07-09 12:55:14.255 +03:00 [INF] Starting L-SalesPro API Gateway
+2025-07-09 12:55:14.474 +03:00 [INF] Now listening on: http://localhost:5000
+2025-07-09 12:55:14.476 +03:00 [INF] Now listening on: https://localhost:5009
+2025-07-09 12:55:14.481 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-09 12:55:14.483 +03:00 [INF] Hosting environment: Production
+2025-07-09 12:55:14.485 +03:00 [INF] Content root path: C:\Users\jerry\Desktop\leysco_c_sharp\app\src\ApiGateway
+2025-07-09 12:56:33.332 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/v1/auth/login - application/json 53
+2025-07-09 12:56:33.366 +03:00 [INF] Request 5491834e-4421-409e-8f92-7a020b889c6e: POST /api/v1/auth/login from ::1
+2025-07-09 12:56:35.192 +03:00 [WRN] Missing or invalid Authorization header for path: /api/v1/auth/login
+2025-07-09 12:56:35.241 +03:00 [INF] Request 5491834e-4421-409e-8f92-7a020b889c6e completed: 401 in 1892ms
+2025-07-09 12:56:35.247 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/v1/auth/login - 401 null application/json 1918.0574ms
+2025-07-09 12:56:57.640 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/v1/products - null null
+2025-07-09 12:56:57.646 +03:00 [INF] Request 54d0a9cd-5781-4217-b3b1-5769eb043e81: GET /api/v1/products from ::1
+2025-07-09 12:56:57.655 +03:00 [WRN] Missing or invalid Authorization header for path: /api/v1/products
+2025-07-09 12:56:57.658 +03:00 [INF] Request 54d0a9cd-5781-4217-b3b1-5769eb043e81 completed: 401 in 11ms
+2025-07-09 12:56:57.662 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/v1/products - 401 null application/json 21.5766ms
+2025-07-09 12:57:18.101 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/v1/customers - null null
+2025-07-09 12:57:18.107 +03:00 [INF] Request 8bb55431-dfb8-456a-a085-3ce7b3711483: GET /api/v1/customers from ::1
+2025-07-09 12:57:18.116 +03:00 [WRN] Missing or invalid Authorization header for path: /api/v1/customers
+2025-07-09 12:57:18.118 +03:00 [INF] Request 8bb55431-dfb8-456a-a085-3ce7b3711483 completed: 401 in 11ms
+2025-07-09 12:57:18.123 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/v1/customers - 401 null application/json 21.786ms
+2025-07-09 13:01:59.517 +03:00 [INF] Application is shutting down...
+2025-07-09 13:02:52.983 +03:00 [INF] User profile is available. Using 'C:\Users\jerry\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-09 13:02:53.112 +03:00 [INF] Loading proxy data from config.
+2025-07-09 13:02:53.221 +03:00 [INF] Starting L-SalesPro API Gateway
+2025-07-09 13:02:53.547 +03:00 [INF] Now listening on: http://localhost:5000
+2025-07-09 13:02:53.549 +03:00 [INF] Now listening on: https://localhost:5009
+2025-07-09 13:02:53.554 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-09 13:02:53.557 +03:00 [INF] Hosting environment: Production
+2025-07-09 13:02:53.559 +03:00 [INF] Content root path: C:\Users\jerry\Desktop\leysco_c_sharp\app\src\ApiGateway
+2025-07-09 13:09:39.097 +03:00 [INF] User profile is available. Using 'C:\Users\jerry\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-09 13:09:39.870 +03:00 [INF] Loading proxy data from config.
+2025-07-09 13:09:40.218 +03:00 [INF] Starting L-SalesPro API Gateway
+2025-07-09 13:09:40.928 +03:00 [INF] Now listening on: http://localhost:5000
+2025-07-09 13:09:41.348 +03:00 [INF] Now listening on: https://localhost:5009
+2025-07-09 13:09:41.577 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-09 13:09:41.687 +03:00 [INF] Hosting environment: Production
+2025-07-09 13:09:41.705 +03:00 [INF] Content root path: C:\Users\jerry\Desktop\leysco_c_sharp\app\src\ApiGateway
+2025-07-09 13:40:18.541 +03:00 [INF] Application is shutting down...
+2025-07-09 13:45:39.798 +03:00 [INF] User profile is available. Using 'C:\Users\jerry\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-09 13:45:43.032 +03:00 [INF] Loading proxy data from config.
+2025-07-09 13:45:45.739 +03:00 [INF] Starting L-SalesPro API Gateway
+2025-07-09 13:45:47.487 +03:00 [INF] Now listening on: http://localhost:5000
+2025-07-09 13:45:47.714 +03:00 [INF] Now listening on: https://localhost:5009
+2025-07-09 13:45:47.782 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-09 13:45:47.800 +03:00 [INF] Hosting environment: Production
+2025-07-09 13:45:47.929 +03:00 [INF] Content root path: C:\Users\jerry\Desktop\leysco_c_sharp\app\src\ApiGateway

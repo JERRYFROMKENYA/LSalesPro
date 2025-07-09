@@ -1,0 +1,189 @@
+syntax = "proto3";
+
+package leysco.sales.v1;
+
+option csharp_namespace = "Shared.Contracts.Sales";
+
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+
+// Sales Service - Complete gRPC API
+service Sales {
+  // Customer operations
+  rpc GetCustomer(GetCustomerRequest) returns (GetCustomerResponse);
+  rpc ValidateCustomer(CustomerValidationRequest) returns (CustomerValidationResponse);
+  rpc UpdateCustomerBalance(UpdateCustomerBalanceRequest) returns (UpdateCustomerBalanceResponse);
+  
+  // Order operations
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+  rpc UpdateOrderStatus(UpdateOrderStatusRequest) returns (UpdateOrderStatusResponse);
+  
+  // Notification and events
+  rpc NotifyOrderStatusChange(OrderStatusChangeRequest) returns (OrderStatusChangeResponse);
+  rpc GetCustomerOrderSummary(CustomerOrderSummaryRequest) returns (CustomerOrderSummaryResponse);
+}
+
+// Customer Request/Response Messages
+message GetCustomerRequest {
+  string customer_id = 1;
+}
+
+message GetCustomerResponse {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string phone_number = 5;
+  string customer_type = 6;
+  string customer_category = 7;
+  bool is_active = 8;
+  double credit_limit = 9;
+  double current_balance = 10;
+}
+
+message CustomerValidationRequest {
+  string customer_id = 1;
+  double order_amount = 2;
+}
+
+message CustomerValidationResponse {
+  bool is_valid = 1;
+  string customer_id = 2;
+  string customer_name = 3;
+  bool is_active = 4;
+  double credit_limit = 5;
+  double current_balance = 6;
+  string error_message = 7;
+}
+
+message UpdateCustomerBalanceRequest {
+  string customer_id = 1;
+  bool has_credit_limit = 2;
+  double credit_limit = 3;
+}
+
+message UpdateCustomerBalanceResponse {
+  bool success = 1;
+  string customer_id = 2;
+  double credit_limit = 3;
+  double current_balance = 4;
+  double available_credit = 5;
+  string error_message = 6;
+  string error_code = 7;
+}
+
+// Order Request/Response Messages
+message GetOrderRequest {
+  string order_id = 1;
+  string order_number = 2;
+}
+
+message OrderItemResponse {
+  string id = 1;
+  string product_sku = 2;
+  string product_name = 3;
+  int32 quantity = 4;
+  double unit_price = 5;
+  double line_total = 6;
+}
+
+message GetOrderResponse {
+  string id = 1;
+  string order_number = 2;
+  string customer_id = 3;
+  string customer_name = 4;
+  google.protobuf.Timestamp order_date = 5;
+  string status = 6;
+  double total_amount = 7;
+  string shipping_address = 8;
+  string payment_method = 9;
+  repeated OrderItemResponse items = 10;
+}
+
+message OrderItemRequest {
+  string product_sku = 1;
+  string product_name = 2;
+  int32 quantity = 3;
+  double unit_price = 4;
+}
+
+message CreateOrderRequest {
+  string customer_id = 1;
+  string shipping_address = 2;
+  string shipping_city = 3;
+  string shipping_state = 4;
+  string shipping_zip_code = 5;
+  string billing_address = 6;
+  string billing_city = 7;
+  string billing_state = 8;
+  string billing_zip_code = 9;
+  string payment_method = 10;
+  string notes = 11;
+  repeated OrderItemRequest items = 12;
+}
+
+message CreateOrderResponse {
+  bool success = 1;
+  string order_id = 2;
+  string order_number = 3;
+  double total_amount = 4;
+  string status = 5;
+  google.protobuf.Timestamp order_date = 6;
+  string error_message = 7;
+  string error_code = 8;
+}
+
+message UpdateOrderStatusRequest {
+  string order_id = 1;
+  string status = 2;
+  string reason = 3;
+  string tracking_info = 4;
+}
+
+message UpdateOrderStatusResponse {
+  bool success = 1;
+  string order_id = 2;
+  string order_number = 3;
+  string status = 4;
+  string error_message = 5;
+  string error_code = 6;
+}
+
+// Event and Notification Messages
+message OrderStatusChangeRequest {
+  string order_id = 1;
+  string previous_status = 2;
+  string new_status = 3;
+  string changed_by = 4;
+  int64 timestamp = 5;
+  string reason = 6;
+}
+
+message OrderStatusChangeResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message CustomerOrderSummaryRequest {
+  string customer_id = 1;
+  int64 from_date = 2; // Unix timestamp
+  int64 to_date = 3;   // Unix timestamp
+}
+
+message CustomerOrderSummaryResponse {
+  CustomerOrderSummary summary = 1;
+  bool success = 2;
+  string error_message = 3;
+}
+
+// Common Types
+message CustomerOrderSummary {
+  string customer_id = 1;
+  int32 total_orders = 2;
+  leysco.common.v1.Money total_value = 3;
+  leysco.common.v1.Money average_order_value = 4;
+  int32 cancelled_orders = 5;
+  int32 completed_orders = 6;
+  string last_order_date = 7; // ISO 8601 date
+}

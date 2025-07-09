@@ -1,0 +1,123 @@
+syntax = "proto3";
+
+package leysco.inventory.v1;
+
+option csharp_namespace = "Shared.Contracts.Inventory";
+
+// Inventory Service - Internal gRPC API
+service InventoryService {
+  // Check product availability across warehouses
+  rpc CheckProductAvailability(CheckAvailabilityRequest) returns (CheckAvailabilityResponse);
+  
+  // Reserve stock for order processing
+  rpc ReserveStock(ReserveStockRequest) returns (ReserveStockResponse);
+  
+  // Release reserved stock (on order cancellation)
+  rpc ReleaseStock(ReleaseStockRequest) returns (ReleaseStockResponse);
+  
+  // Get detailed product information
+  rpc GetProductDetails(GetProductDetailsRequest) returns (GetProductDetailsResponse);
+  
+  // Get multiple products in batch
+  rpc GetProductsBatch(GetProductsBatchRequest) returns (GetProductsBatchResponse);
+  
+  // Update stock levels (for inventory management)
+  rpc UpdateStockLevels(UpdateStockLevelsRequest) returns (UpdateStockLevelsResponse);
+}
+
+// Request/Response Messages
+message CheckAvailabilityRequest {
+  string product_id = 1;
+  int32 quantity = 2;
+  string warehouse_id = 3; // Optional - if not specified, check all warehouses
+}
+
+message CheckAvailabilityResponse {
+  bool is_available = 1;
+  int32 available_quantity = 2;
+  repeated WarehouseStock warehouse_stocks = 3;
+  string error_message = 4;
+}
+
+message ReserveStockRequest {
+  string product_id = 1;
+  int32 quantity = 2;
+  string warehouse_id = 3;
+  string reservation_id = 4; // Unique identifier for this reservation
+  int32 timeout_minutes = 5; // How long to hold the reservation
+}
+
+message ReserveStockResponse {
+  bool success = 1;
+  string reservation_id = 2;
+  int32 reserved_quantity = 3;
+  string expiry_time = 4; // ISO 8601 timestamp
+  string error_message = 5;
+}
+
+message ReleaseStockRequest {
+  string reservation_id = 1;
+}
+
+message ReleaseStockResponse {
+  bool success = 1;
+  int32 released_quantity = 2;
+  string error_message = 3;
+}
+
+message GetProductDetailsRequest {
+  string product_id = 1;
+}
+
+message GetProductDetailsResponse {
+  ProductInfo product = 1;
+  bool success = 2;
+  string error_message = 3;
+}
+
+message GetProductsBatchRequest {
+  repeated string product_ids = 1;
+}
+
+message GetProductsBatchResponse {
+  repeated ProductInfo products = 1;
+  bool success = 2;
+  string error_message = 3;
+}
+
+message UpdateStockLevelsRequest {
+  repeated StockUpdate updates = 1;
+}
+
+message UpdateStockLevelsResponse {
+  bool success = 1;
+  repeated string failed_updates = 2; // Product IDs that failed to update
+  string error_message = 3;
+}
+
+// Common Types
+message WarehouseStock {
+  string warehouse_id = 1;
+  string warehouse_name = 2;
+  int32 available_quantity = 3;
+  int32 reserved_quantity = 4;
+  int32 total_quantity = 5;
+}
+
+message ProductInfo {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string sku = 4;
+  double unit_price = 5;
+  string category = 6;
+  bool is_active = 7;
+  repeated WarehouseStock stock_levels = 8;
+}
+
+message StockUpdate {
+  string product_id = 1;
+  string warehouse_id = 2;
+  int32 quantity_change = 3; // Positive for increase, negative for decrease
+  string reason = 4; // "sale", "purchase", "adjustment", etc.
+}

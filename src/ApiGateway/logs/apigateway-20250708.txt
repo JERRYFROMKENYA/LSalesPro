@@ -1,0 +1,111 @@
+2025-07-08 18:03:11.317 +03:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-07-08 18:03:11.441 +03:00 [INF] User profile is available. Using 'C:\Users\jerry\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-08 18:03:11.512 +03:00 [INF] Loading proxy data from config.
+2025-07-08 18:03:11.587 +03:00 [INF] Starting L-SalesPro API Gateway
+2025-07-08 18:03:11.774 +03:00 [WRN] Overriding address(es) 'https://localhost:5000, http://localhost:5010'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-07-08 18:03:11.837 +03:00 [INF] Now listening on: http://localhost:5000
+2025-07-08 18:03:11.840 +03:00 [INF] Now listening on: https://localhost:5001
+2025-07-08 18:03:11.842 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-08 18:03:11.844 +03:00 [INF] Hosting environment: Production
+2025-07-08 18:03:11.847 +03:00 [INF] Content root path: C:\Users\jerry\Desktop\leysco_c_sharp\app\src\ApiGateway
+2025-07-08 18:03:44.312 +03:00 [INF] Application is shutting down...
+2025-07-08 18:05:46.331 +03:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-07-08 18:05:46.593 +03:00 [INF] User profile is available. Using 'C:\Users\jerry\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-08 18:05:46.674 +03:00 [INF] Loading proxy data from config.
+2025-07-08 18:05:46.803 +03:00 [INF] Starting L-SalesPro API Gateway
+2025-07-08 18:05:47.041 +03:00 [WRN] Overriding address(es) 'https://localhost:5000, http://localhost:5010'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-07-08 18:05:47.131 +03:00 [INF] Now listening on: http://localhost:5000
+2025-07-08 18:05:47.134 +03:00 [INF] Now listening on: https://localhost:5001
+2025-07-08 18:05:47.137 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-08 18:05:47.139 +03:00 [INF] Hosting environment: Production
+2025-07-08 18:05:47.142 +03:00 [INF] Content root path: C:\Users\jerry\Desktop\leysco_c_sharp\app\src\ApiGateway
+2025-07-08 18:08:24.779 +03:00 [INF] Request starting HTTP/1.1 GET https://localhost:5001/api/health - null null
+2025-07-08 18:08:24.804 +03:00 [INF] Request e90ed405-1e25-4233-8fc0-a45fe113fa7e: GET /api/health from ::1
+2025-07-08 18:08:26.256 +03:00 [WRN] Missing or invalid Authorization header for path: /api/health
+2025-07-08 18:08:26.301 +03:00 [INF] Request e90ed405-1e25-4233-8fc0-a45fe113fa7e completed: 401 in 1510ms
+2025-07-08 18:08:26.309 +03:00 [INF] Request finished HTTP/1.1 GET https://localhost:5001/api/health - 401 null application/json 1530.6677ms
+2025-07-08 18:09:50.546 +03:00 [INF] Config changed. Stopping the following endpoints: 'https://localhost:5001'
+2025-07-08 18:09:50.553 +03:00 [INF] Loading proxy data from config.
+2025-07-08 18:09:50.570 +03:00 [INF] Config changed. Starting the following endpoints: 'https://localhost:5009'
+2025-07-08 18:09:50.835 +03:00 [INF] Loading proxy data from config.
+2025-07-08 18:10:01.688 +03:00 [INF] Loading proxy data from config.
+2025-07-08 18:10:01.954 +03:00 [INF] Loading proxy data from config.
+2025-07-08 18:11:09.916 +03:00 [INF] Application is shutting down...
+2025-07-08 18:14:15.828 +03:00 [INF] User profile is available. Using 'C:\Users\jerry\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-08 18:14:15.935 +03:00 [INF] Loading proxy data from config.
+2025-07-08 18:14:16.006 +03:00 [INF] Starting L-SalesPro API Gateway
+2025-07-08 18:14:16.211 +03:00 [INF] Now listening on: http://localhost:5000
+2025-07-08 18:14:16.214 +03:00 [INF] Now listening on: https://localhost:5009
+2025-07-08 18:14:16.220 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-08 18:14:16.223 +03:00 [INF] Hosting environment: Production
+2025-07-08 18:14:16.225 +03:00 [INF] Content root path: C:\Users\jerry\Desktop\leysco_c_sharp\app\src\ApiGateway
+2025-07-08 18:15:18.564 +03:00 [INF] Application is shutting down...
+2025-07-08 18:16:35.246 +03:00 [INF] User profile is available. Using 'C:\Users\jerry\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-08 18:16:35.358 +03:00 [INF] Loading proxy data from config.
+2025-07-08 18:16:35.446 +03:00 [INF] Starting L-SalesPro API Gateway
+2025-07-08 18:16:35.681 +03:00 [INF] Now listening on: http://localhost:5000
+2025-07-08 18:16:35.684 +03:00 [INF] Now listening on: https://localhost:5009
+2025-07-08 18:16:35.688 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-08 18:16:35.690 +03:00 [INF] Hosting environment: Production
+2025-07-08 18:16:35.692 +03:00 [INF] Content root path: C:\Users\jerry\Desktop\leysco_c_sharp\app\src\ApiGateway
+2025-07-08 18:16:56.973 +03:00 [INF] Request starting HTTP/1.1 GET https://localhost:5009/api/health - null null
+2025-07-08 18:16:56.995 +03:00 [INF] Request 1dd7ec78-329f-4dbb-9d41-091e6bbd47c8: GET /api/health from ::1
+2025-07-08 18:16:57.056 +03:00 [WRN] Missing or invalid Authorization header for path: /api/health
+2025-07-08 18:16:57.086 +03:00 [INF] Request 1dd7ec78-329f-4dbb-9d41-091e6bbd47c8 completed: 401 in 103ms
+2025-07-08 18:16:57.095 +03:00 [INF] Request finished HTTP/1.1 GET https://localhost:5009/api/health - 401 null application/json 123.1767ms
+2025-07-08 18:20:24.698 +03:00 [INF] Application is shutting down...
+2025-07-08 18:27:41.683 +03:00 [INF] User profile is available. Using 'C:\Users\jerry\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-08 18:27:41.864 +03:00 [INF] Loading proxy data from config.
+2025-07-08 18:27:41.970 +03:00 [INF] Starting L-SalesPro API Gateway
+2025-07-08 18:27:42.287 +03:00 [INF] Now listening on: http://localhost:5000
+2025-07-08 18:27:42.290 +03:00 [INF] Now listening on: https://localhost:5009
+2025-07-08 18:27:42.296 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-08 18:27:42.299 +03:00 [INF] Hosting environment: Production
+2025-07-08 18:27:42.302 +03:00 [INF] Content root path: C:\Users\jerry\Desktop\leysco_c_sharp\app\src\ApiGateway
+2025-07-08 18:28:24.570 +03:00 [INF] Request starting HTTP/1.1 GET https://localhost:5009/api/health - null null
+2025-07-08 18:28:24.592 +03:00 [INF] Request d2432050-1e0d-4fb4-bd83-82e858ccc075: GET /api/health from ::1
+2025-07-08 18:28:24.661 +03:00 [INF] Executing endpoint 'ApiGateway.Controllers.HealthController.Get (ApiGateway)'
+2025-07-08 18:28:24.684 +03:00 [INF] Route matched with {action = "Get", controller = "Health"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get() on controller ApiGateway.Controllers.HealthController (ApiGateway).
+2025-07-08 18:28:24.702 +03:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType0`4[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-07-08 18:28:24.749 +03:00 [INF] Executed action ApiGateway.Controllers.HealthController.Get (ApiGateway) in 51.3804ms
+2025-07-08 18:28:24.759 +03:00 [INF] Executed endpoint 'ApiGateway.Controllers.HealthController.Get (ApiGateway)'
+2025-07-08 18:28:24.761 +03:00 [INF] Request d2432050-1e0d-4fb4-bd83-82e858ccc075 completed: 200 in 180ms
+2025-07-08 18:28:24.772 +03:00 [INF] Request finished HTTP/1.1 GET https://localhost:5009/api/health - 200 null application/json; charset=utf-8 202.7253ms
+2025-07-08 18:31:46.677 +03:00 [INF] Request starting HTTP/1.1 GET https://localhost:5009/api/health - null null
+2025-07-08 18:31:46.683 +03:00 [INF] Request d25bfa9c-d5d7-4005-822c-a723c6b07219: GET /api/health from ::1
+2025-07-08 18:31:46.691 +03:00 [INF] Executing endpoint 'ApiGateway.Controllers.HealthController.Get (ApiGateway)'
+2025-07-08 18:31:46.694 +03:00 [INF] Route matched with {action = "Get", controller = "Health"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get() on controller ApiGateway.Controllers.HealthController (ApiGateway).
+2025-07-08 18:31:46.699 +03:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType0`4[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-07-08 18:31:46.705 +03:00 [INF] Executed action ApiGateway.Controllers.HealthController.Get (ApiGateway) in 7.7219ms
+2025-07-08 18:31:46.709 +03:00 [INF] Executed endpoint 'ApiGateway.Controllers.HealthController.Get (ApiGateway)'
+2025-07-08 18:31:46.712 +03:00 [INF] Request d25bfa9c-d5d7-4005-822c-a723c6b07219 completed: 200 in 29ms
+2025-07-08 18:31:46.717 +03:00 [INF] Request finished HTTP/1.1 GET https://localhost:5009/api/health - 200 null application/json; charset=utf-8 40.4716ms
+2025-07-08 18:33:12.402 +03:00 [INF] Request starting HTTP/1.1 GET https://localhost:5009/api/health/detailed - null null
+2025-07-08 18:33:12.412 +03:00 [INF] Request bdc8f85a-e91d-4238-b078-b37ca2271baa: GET /api/health/detailed from ::1
+2025-07-08 18:33:12.422 +03:00 [INF] Executing endpoint 'ApiGateway.Controllers.HealthController.GetDetailed (ApiGateway)'
+2025-07-08 18:33:12.428 +03:00 [INF] Route matched with {action = "GetDetailed", controller = "Health"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult GetDetailed() on controller ApiGateway.Controllers.HealthController (ApiGateway).
+2025-07-08 18:33:12.436 +03:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType1`7[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int64, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String[], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-07-08 18:33:12.457 +03:00 [INF] Executed action ApiGateway.Controllers.HealthController.GetDetailed (ApiGateway) in 22.1621ms
+2025-07-08 18:33:12.462 +03:00 [INF] Executed endpoint 'ApiGateway.Controllers.HealthController.GetDetailed (ApiGateway)'
+2025-07-08 18:33:12.465 +03:00 [INF] Request bdc8f85a-e91d-4238-b078-b37ca2271baa completed: 200 in 53ms
+2025-07-08 18:33:12.470 +03:00 [INF] Request finished HTTP/1.1 GET https://localhost:5009/api/health/detailed - 200 null application/json; charset=utf-8 67.2538ms
+2025-07-08 18:35:07.032 +03:00 [INF] Request starting HTTP/1.1 GET https://localhost:5009/api/auth/health - null null
+2025-07-08 18:35:07.040 +03:00 [INF] Request 89903513-f320-4af0-aeba-7f8334c626f7: GET /api/auth/health from ::1
+2025-07-08 18:35:07.046 +03:00 [WRN] Missing or invalid Authorization header for path: /api/auth/health
+2025-07-08 18:35:07.053 +03:00 [INF] Request 89903513-f320-4af0-aeba-7f8334c626f7 completed: 401 in 13ms
+2025-07-08 18:35:07.057 +03:00 [INF] Request finished HTTP/1.1 GET https://localhost:5009/api/auth/health - 401 null application/json 24.7788ms
+2025-07-08 18:35:38.581 +03:00 [INF] Request starting HTTP/1.1 GET https://localhost:5009/api/auth/health - null null
+2025-07-08 18:35:38.586 +03:00 [INF] Request 0454ba5d-3edb-4231-8c36-6225d8613415: GET /api/auth/health from ::1
+2025-07-08 18:35:38.591 +03:00 [WRN] Missing or invalid Authorization header for path: /api/auth/health
+2025-07-08 18:35:38.594 +03:00 [INF] Request 0454ba5d-3edb-4231-8c36-6225d8613415 completed: 401 in 8ms
+2025-07-08 18:35:38.602 +03:00 [INF] Request finished HTTP/1.1 GET https://localhost:5009/api/auth/health - 401 null application/json 21.2881ms
+2025-07-08 18:39:13.673 +03:00 [INF] Application is shutting down...
+2025-07-08 20:22:19.703 +03:00 [INF] User profile is available. Using 'C:\Users\jerry\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-08 20:22:19.885 +03:00 [INF] Loading proxy data from config.
+2025-07-08 20:22:20.006 +03:00 [INF] Starting L-SalesPro API Gateway
+2025-07-08 20:22:20.368 +03:00 [INF] Now listening on: http://localhost:5000
+2025-07-08 20:22:20.371 +03:00 [INF] Now listening on: https://localhost:5009
+2025-07-08 20:22:20.377 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-08 20:22:20.381 +03:00 [INF] Hosting environment: Production
+2025-07-08 20:22:20.384 +03:00 [INF] Content root path: C:\Users\jerry\Desktop\leysco_c_sharp\app\src\ApiGateway
+2025-07-08 20:22:43.716 +03:00 [INF] Application is shutting down...
