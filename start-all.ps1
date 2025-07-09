@@ -1,6 +1,9 @@
 ﻿# PowerShell script to start all microservices and the API Gateway in separate windows
 
 # Start AuthService
+Start-Process powershell -ArgumentList "dotnet clean;dotnet restore; dotnet build; dotnet run" -WindowStyle Normal
+
+# Start AuthService
 Start-Process powershell -ArgumentList "cd src\AuthService\AuthService.Api; dotnet run" -WindowStyle Normal
 
 # Start InventoryService
