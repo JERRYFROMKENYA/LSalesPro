@@ -2,9 +2,7 @@ using AuthService.Application.Interfaces;
 using AuthService.Application.Services;
 using AuthService.Infrastructure.Data;
 using AuthService.Infrastructure.Repositories;
-using AuthService.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -102,8 +100,7 @@ builder.Services.AddScoped<IPasswordResetTokenRepository, PasswordResetTokenRepo
 
 // Register services
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IPasswordService, AuthService.Application.Services.PasswordService>();
-builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IAuthService, AuthService.Application.Services.AuthService>();
 builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
 
@@ -181,7 +178,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapGrpcService<AuthService.Api.Services.AuthService>();
 
 // Add health check endpoints
 app.MapHealthChecks("/health");

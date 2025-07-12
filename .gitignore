@@ -5,6 +5,10 @@
 /.vscode
 /.ai
 /.idea
+
+*txt
+*db
+*GEMINI*
 /src/ApiGateway/bin/Debug/net8.0/ApiGateway.deps.json
 /src/ApiGateway/bin/Debug/net8.0/ApiGateway.dll
 /src/ApiGateway/bin/Debug/net8.0/ApiGateway.exe
