@@ -64,13 +64,6 @@ namespace SalesService.Application.Services
             return count;
         }
 
-        public async Task EnqueueNotificationAsync(NotificationDto notification)
-        {
-            // This should enqueue the notification for background processing
-            // For now, throw NotImplementedException to indicate it needs a real implementation
-            throw new NotImplementedException("Notification queueing is not implemented. Implement using INotificationQueueService if available.");
-        }
-
         private static NotificationDto MapToDto(Notification notification)
         {
             return new NotificationDto

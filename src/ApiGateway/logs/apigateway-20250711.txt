@@ -1,0 +1,105 @@
+2025-07-11 21:07:55.447 +03:00 [INF] User profile is available. Using 'C:\Users\jerry\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-11 21:07:56.056 +03:00 [INF] Loading proxy data from config.
+2025-07-11 21:07:56.159 +03:00 [INF] Starting L-SalesPro API Gateway
+2025-07-11 21:07:56.503 +03:00 [INF] Now listening on: http://localhost:5000
+2025-07-11 21:07:56.506 +03:00 [INF] Now listening on: https://localhost:5009
+2025-07-11 21:07:56.512 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-11 21:07:56.515 +03:00 [INF] Hosting environment: Production
+2025-07-11 21:07:56.517 +03:00 [INF] Content root path: C:\Users\jerry\Desktop\leysco_c_sharp\app\src\ApiGateway
+2025-07-11 21:08:24.956 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/v1/Auth/login - application/json 65
+2025-07-11 21:08:25.011 +03:00 [INF] Request d0adeacc-2e02-4020-9251-64ab1046c1d6: POST /api/v1/Auth/login from ::1
+2025-07-11 21:08:25.188 +03:00 [INF] Executing endpoint 'auth-route-v1'
+2025-07-11 21:08:25.314 +03:00 [INF] Proxying to http://localhost:5001/api/v1/auth/login HTTP/2 RequestVersionOrLower 
+2025-07-11 21:08:33.629 +03:00 [INF] Received HTTP/1.1 response 401.
+2025-07-11 21:08:34.042 +03:00 [INF] Executed endpoint 'auth-route-v1'
+2025-07-11 21:08:34.069 +03:00 [INF] Request d0adeacc-2e02-4020-9251-64ab1046c1d6 completed: 401 in 9090ms
+2025-07-11 21:08:34.111 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/v1/Auth/login - 401 null text/plain; charset=utf-8 9158.3262ms
+2025-07-11 21:08:51.455 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/v1/Auth/login - application/json 68
+2025-07-11 21:08:51.464 +03:00 [INF] Request f51d8049-2093-4c17-99b3-7fdbce04848d: POST /api/v1/Auth/login from ::1
+2025-07-11 21:08:51.473 +03:00 [INF] Executing endpoint 'auth-route-v1'
+2025-07-11 21:08:51.478 +03:00 [INF] Proxying to http://localhost:5001/api/v1/auth/login HTTP/2 RequestVersionOrLower 
+2025-07-11 21:08:52.773 +03:00 [INF] Received HTTP/1.1 response 200.
+2025-07-11 21:08:52.782 +03:00 [INF] Executed endpoint 'auth-route-v1'
+2025-07-11 21:08:52.787 +03:00 [INF] Request f51d8049-2093-4c17-99b3-7fdbce04848d completed: 200 in 1323ms
+2025-07-11 21:08:52.794 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/v1/Auth/login - 200 null application/json; charset=utf-8 1339.5734ms
+2025-07-11 21:27:15.068 +03:00 [INF] Application is shutting down...
+2025-07-11 21:27:43.786 +03:00 [INF] User profile is available. Using 'C:\Users\jerry\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-11 21:27:44.077 +03:00 [INF] Loading proxy data from config.
+2025-07-11 21:27:44.273 +03:00 [INF] Starting L-SalesPro API Gateway
+2025-07-11 21:27:44.902 +03:00 [INF] Now listening on: http://localhost:5000
+2025-07-11 21:27:44.908 +03:00 [INF] Now listening on: https://localhost:5009
+2025-07-11 21:27:44.921 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-11 21:27:44.973 +03:00 [INF] Hosting environment: Production
+2025-07-11 21:27:44.988 +03:00 [INF] Content root path: C:\Users\jerry\Desktop\leysco_c_sharp\app\src\ApiGateway
+2025-07-11 21:37:26.596 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/v1/Auth/login - application/json 68
+2025-07-11 21:37:28.136 +03:00 [INF] Request 2a47445b-fefd-4e3a-9772-44c5645fec46: POST /api/v1/Auth/login from ::1
+2025-07-11 21:37:29.453 +03:00 [INF] Executing endpoint 'auth-route-v1'
+2025-07-11 21:37:29.791 +03:00 [INF] Proxying to http://localhost:5001/api/v1/auth/login HTTP/2 RequestVersionOrLower 
+2025-07-11 21:37:38.376 +03:00 [INF] Received HTTP/1.1 response 401.
+2025-07-11 21:37:39.020 +03:00 [INF] Executed endpoint 'auth-route-v1'
+2025-07-11 21:37:39.277 +03:00 [INF] Request 2a47445b-fefd-4e3a-9772-44c5645fec46 completed: 401 in 11203ms
+2025-07-11 21:37:40.485 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/v1/Auth/login - 401 null text/plain; charset=utf-8 13898.042ms
+2025-07-11 21:55:58.855 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/v1/Auth/register - application/json 91
+2025-07-11 21:55:59.163 +03:00 [INF] Request e36821cf-f782-469d-9ba4-dd27b5339c85: POST /api/v1/Auth/register from ::1
+2025-07-11 21:55:59.209 +03:00 [INF] Executing endpoint 'auth-route-v1'
+2025-07-11 21:55:59.261 +03:00 [INF] Proxying to http://localhost:5001/api/v1/auth/register HTTP/2 RequestVersionOrLower 
+2025-07-11 21:56:00.660 +03:00 [INF] Received HTTP/1.1 response 400.
+2025-07-11 21:56:01.156 +03:00 [INF] Executed endpoint 'auth-route-v1'
+2025-07-11 21:56:01.163 +03:00 [INF] Request e36821cf-f782-469d-9ba4-dd27b5339c85 completed: 400 in 2001ms
+2025-07-11 21:56:01.205 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/v1/Auth/register - 400 null text/plain; charset=utf-8 2346.3285ms
+2025-07-11 21:56:52.330 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/v1/Auth/register - application/json 97
+2025-07-11 21:56:52.358 +03:00 [INF] Request 390b2ce0-f73d-4a6d-8164-73a6674f36f0: POST /api/v1/Auth/register from ::1
+2025-07-11 21:56:52.380 +03:00 [INF] Executing endpoint 'auth-route-v1'
+2025-07-11 21:56:52.394 +03:00 [INF] Proxying to http://localhost:5001/api/v1/auth/register HTTP/2 RequestVersionOrLower 
+2025-07-11 21:56:52.466 +03:00 [INF] Received HTTP/1.1 response 400.
+2025-07-11 21:56:52.478 +03:00 [INF] Executed endpoint 'auth-route-v1'
+2025-07-11 21:56:52.489 +03:00 [INF] Request 390b2ce0-f73d-4a6d-8164-73a6674f36f0 completed: 400 in 131ms
+2025-07-11 21:56:52.522 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/v1/Auth/register - 400 null text/plain; charset=utf-8 190.01ms
+2025-07-11 21:56:59.069 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/v1/Auth/register - application/json 97
+2025-07-11 21:56:59.091 +03:00 [INF] Request 56cdef10-f682-43f6-9956-dcde60ec1c80: POST /api/v1/Auth/register from ::1
+2025-07-11 21:56:59.103 +03:00 [INF] Executing endpoint 'auth-route-v1'
+2025-07-11 21:56:59.110 +03:00 [INF] Proxying to http://localhost:5001/api/v1/auth/register HTTP/2 RequestVersionOrLower 
+2025-07-11 21:57:00.081 +03:00 [INF] Received HTTP/1.1 response 201.
+2025-07-11 21:57:00.096 +03:00 [INF] Executed endpoint 'auth-route-v1'
+2025-07-11 21:57:00.103 +03:00 [INF] Request 56cdef10-f682-43f6-9956-dcde60ec1c80 completed: 201 in 1012ms
+2025-07-11 21:57:00.114 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/v1/Auth/register - 201 null text/plain; charset=utf-8 1045.3293ms
+2025-07-11 22:18:07.251 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/v1/Auth/register - application/json 212
+2025-07-11 22:18:07.268 +03:00 [INF] Request 49e6473d-1e6c-41ce-8818-bd1a30be7cbe: POST /api/v1/Auth/register from ::1
+2025-07-11 22:18:07.282 +03:00 [INF] Executing endpoint 'auth-route-v1'
+2025-07-11 22:18:07.289 +03:00 [INF] Proxying to http://localhost:5001/api/v1/auth/register HTTP/2 RequestVersionOrLower 
+2025-07-11 22:18:13.365 +03:00 [INF] Received HTTP/1.1 response 201.
+2025-07-11 22:18:13.387 +03:00 [INF] Executed endpoint 'auth-route-v1'
+2025-07-11 22:18:13.411 +03:00 [INF] Request 49e6473d-1e6c-41ce-8818-bd1a30be7cbe completed: 201 in 6142ms
+2025-07-11 22:18:13.421 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/v1/Auth/register - 201 null text/plain; charset=utf-8 6170.3005ms
+2025-07-11 22:18:45.008 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/v1/Auth/login - application/json 73
+2025-07-11 22:18:45.021 +03:00 [INF] Request 12652b90-64e5-415d-ad22-551e034f1d48: POST /api/v1/Auth/login from ::1
+2025-07-11 22:18:45.034 +03:00 [INF] Executing endpoint 'auth-route-v1'
+2025-07-11 22:18:45.041 +03:00 [INF] Proxying to http://localhost:5001/api/v1/auth/login HTTP/2 RequestVersionOrLower 
+2025-07-11 22:18:45.666 +03:00 [INF] Received HTTP/1.1 response 401.
+2025-07-11 22:18:45.674 +03:00 [INF] Executed endpoint 'auth-route-v1'
+2025-07-11 22:18:45.685 +03:00 [INF] Request 12652b90-64e5-415d-ad22-551e034f1d48 completed: 401 in 663ms
+2025-07-11 22:18:45.697 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/v1/Auth/login - 401 null application/json; charset=utf-8 688.9563ms
+2025-07-11 22:19:14.086 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/v1/Auth/login - application/json 65
+2025-07-11 22:19:14.142 +03:00 [INF] Request f5cbb265-e585-40d8-81db-bb1d3412f9a2: POST /api/v1/Auth/login from ::1
+2025-07-11 22:19:14.180 +03:00 [INF] Executing endpoint 'auth-route-v1'
+2025-07-11 22:19:14.186 +03:00 [INF] Proxying to http://localhost:5001/api/v1/auth/login HTTP/2 RequestVersionOrLower 
+2025-07-11 22:19:14.786 +03:00 [INF] Received HTTP/1.1 response 200.
+2025-07-11 22:19:14.795 +03:00 [INF] Executed endpoint 'auth-route-v1'
+2025-07-11 22:19:14.802 +03:00 [INF] Request f5cbb265-e585-40d8-81db-bb1d3412f9a2 completed: 200 in 660ms
+2025-07-11 22:19:14.811 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/v1/Auth/login - 200 null application/json; charset=utf-8 725.0684ms
+2025-07-11 22:20:33.940 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/v1/auth/refresh - application/json 101
+2025-07-11 22:20:33.956 +03:00 [INF] Request 39116b37-6be6-420d-974f-5c5c9727cf9d: POST /api/v1/auth/refresh from ::1
+2025-07-11 22:20:33.967 +03:00 [INF] Executing endpoint 'auth-route-v1'
+2025-07-11 22:20:33.976 +03:00 [INF] Proxying to http://localhost:5001/api/v1/auth/refresh HTTP/2 RequestVersionOrLower 
+2025-07-11 22:20:34.394 +03:00 [INF] Received HTTP/1.1 response 200.
+2025-07-11 22:20:34.408 +03:00 [INF] Executed endpoint 'auth-route-v1'
+2025-07-11 22:20:34.418 +03:00 [INF] Request 39116b37-6be6-420d-974f-5c5c9727cf9d completed: 200 in 461ms
+2025-07-11 22:20:34.433 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/v1/auth/refresh - 200 null application/json; charset=utf-8 492.7631ms
+2025-07-11 22:20:48.004 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/v1/auth/refresh - application/json 101
+2025-07-11 22:20:48.017 +03:00 [INF] Request 66e0941b-4736-4d53-8bc6-0b1b0db7d288: POST /api/v1/auth/refresh from ::1
+2025-07-11 22:20:48.029 +03:00 [INF] Executing endpoint 'auth-route-v1'
+2025-07-11 22:20:48.035 +03:00 [INF] Proxying to http://localhost:5001/api/v1/auth/refresh HTTP/2 RequestVersionOrLower 
+2025-07-11 22:20:48.074 +03:00 [INF] Received HTTP/1.1 response 401.
+2025-07-11 22:20:48.084 +03:00 [INF] Executed endpoint 'auth-route-v1'
+2025-07-11 22:20:48.098 +03:00 [INF] Request 66e0941b-4736-4d53-8bc6-0b1b0db7d288 completed: 401 in 81ms
+2025-07-11 22:20:48.116 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/v1/auth/refresh - 401 null text/plain; charset=utf-8 112.0346ms

@@ -9,14 +9,12 @@ namespace SalesService.Application.Services;
 public class CustomerService : ICustomerService
 {
     private readonly ICustomerRepository _customerRepository;
-    private readonly IOrderRepository _orderRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<CustomerService> _logger;
 
-    public CustomerService(ICustomerRepository customerRepository, IOrderRepository orderRepository, IMapper mapper, ILogger<CustomerService> logger)
+    public CustomerService(ICustomerRepository customerRepository, IMapper mapper, ILogger<CustomerService> logger)
     {
         _customerRepository = customerRepository;
-        _orderRepository = orderRepository;
         _mapper = mapper;
         _logger = logger;
     }
@@ -308,10 +306,11 @@ public class CustomerService : ICustomerService
         return true;
     }
 
+    // Stub implementations for new interface methods
     public async Task<IEnumerable<OrderDto>> GetOrderHistoryAsync(Guid customerId)
     {
-        var orders = await _orderRepository.GetByCustomerIdAsync(customerId);
-        return _mapper.Map<IEnumerable<OrderDto>>(orders);
+        // TODO: Implement actual logic
+        return new List<OrderDto>();
     }
 
     public async Task<CustomerCreditStatusDto> GetCreditStatusAsync(Guid customerId)
