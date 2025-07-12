@@ -9,11 +9,13 @@ namespace SalesService.Api.Services
     {
         private readonly ILogger<NotificationBackgroundService> _logger;
         private readonly SalesService.Application.Services.INotificationQueueService _notificationQueueService;
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        public NotificationBackgroundService(ILogger<NotificationBackgroundService> logger, SalesService.Application.Services.INotificationQueueService notificationQueueService)
+        public NotificationBackgroundService(ILogger<NotificationBackgroundService> logger, SalesService.Application.Services.INotificationQueueService notificationQueueService, IServiceScopeFactory scopeFactory)
         {
             _logger = logger;
             _notificationQueueService = notificationQueueService;
+            _scopeFactory = scopeFactory;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -27,15 +29,12 @@ namespace SalesService.Api.Services
                     using (var scope = _scopeFactory.CreateScope())
                     {
                         _logger.LogInformation("Checking for pending notifications from queue...");
-                        
-                        await foreach (var notification in _notificationQueueService.DequeueAsync(stoppingToken))
-                        {
-                            _logger.LogInformation("Processing notification from queue: {NotificationId} - {Message}", notification.Id, notification.Message);
-                            // Here you would integrate with an actual email sending service
-                            // For now, we'll just log it
-                            _logger.LogInformation("Simulating sending email for notification {NotificationId}", notification.Id);
-                            // In a real scenario, after successful sending, you might mark it as sent in a database
-                        }
+                        var notification = await _notificationQueueService.DequeueAsync(stoppingToken);
+                        _logger.LogInformation("Processing notification from queue: {NotificationId} - {Message}", notification.Id, notification.Message);
+                        // Here you would integrate with an actual email sending service
+                        // For now, we'll just log it
+                        _logger.LogInformation("Simulating sending email for notification {NotificationId}", notification.Id);
+                        // In a real scenario, after successful sending, you might mark it as sent in a database
                     }
                 }
                 catch (Exception ex)
