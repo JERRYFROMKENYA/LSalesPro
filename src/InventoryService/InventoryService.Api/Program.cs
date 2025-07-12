@@ -1,3 +1,4 @@
+using InventoryService.Api.Authorization;
 using InventoryService.Application.Interfaces;
 using InventoryService.Application.Services;
 using InventoryService.Infrastructure.Data;
@@ -6,6 +7,7 @@ using InventoryService.Domain.Interfaces;
 using InventoryService.Api.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +23,7 @@ builder.Services.AddGrpc(options =>
 
 // Add database context
 builder.Services.AddDbContext<InventoryDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add repository dependencies
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -54,6 +56,16 @@ builder.Services.AddSwaggerGen(c =>
 
 // Add health checks
 builder.Services.AddHealthChecks();
+
+// Add authorization
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAssertion(context =>
+            context.Resource is HttpContext httpContext &&
+            PublicEndpointsRequirement.IsPublicEndpoint(httpContext))
+        .Build();
+});
 
 var app = builder.Build();
 

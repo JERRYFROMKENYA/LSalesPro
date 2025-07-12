@@ -1,61 +1,41 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SalesService.Application.DTOs;
 using SalesService.Application.Interfaces;
 
-namespace SalesService.Api.Controllers;
-
-[ApiController]
-[Route("api/v1/[controller]")]
-[Produces("application/json")]
-public class CustomersController : ControllerBase
+namespace SalesService.Api.Controllers
 {
-    private readonly ICustomerService _customerService;
-    private readonly ILogger<CustomersController> _logger;
-
-    public CustomersController(ICustomerService customerService, ILogger<CustomersController> logger)
+    [ApiController]
+    [Route("api/v1/[controller]")]
+    public class CustomersController : ControllerBase
     {
-        _customerService = customerService;
-        _logger = logger;
-    }
+        private readonly ICustomerService _customerService;
 
-    /// <summary>
-    /// Get all customers
-    /// </summary>
-    /// <returns>List of customers</returns>
-    [HttpGet]
-    [Authorize(Roles = "Admin,Manager,Sales")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CustomerDto>))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<CustomerDto>>> GetAll()
-    {
-        try
+        public CustomersController(ICustomerService customerService)
         {
-            var customers = await _customerService.GetAllAsync();
+            _customerService = customerService;
+        }
+
+        /// <summary>
+        /// Get a list of customers with optional pagination.
+        /// </summary>
+        /// <param name="pageNumber">The page number for pagination (default: 1).</param>
+        /// <param name="pageSize">The number of items per page (default: 10).</param>
+        /// <returns>A paginated list of customers.</returns>
+        [HttpGet]
+        public async Task<ActionResult<CustomerPagedResultDto>> GetCustomers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            var searchDto = new CustomerSearchDto { PageNumber = pageNumber, PageSize = pageSize };
+            var customers = await _customerService.SearchPagedAsync(searchDto);
             return Ok(customers);
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting all customers");
-            return StatusCode(500, "Internal server error");
-        }
-    }
 
-    /// <summary>
-    /// Get a specific customer by ID
-    /// </summary>
-    /// <param name="id">Customer ID</param>
-    /// <returns>Customer details</returns>
-    [HttpGet("{id}")]
-    [Authorize(Roles = "Admin,Manager,Sales")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CustomerDto))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<CustomerDto>> GetById(Guid id)
-    {
-        try
+        /// <summary>
+        /// Get customer details by ID.
+        /// </summary>
+        /// <param name="id">The ID of the customer.</param>
+        /// <returns>Customer details.</returns>
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CustomerDto>> GetCustomerById(Guid id)
         {
             var customer = await _customerService.GetByIdAsync(id);
             if (customer == null)
@@ -64,408 +44,81 @@ public class CustomersController : ControllerBase
             }
             return Ok(customer);
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting customer with ID: {CustomerId}", id);
-            return StatusCode(500, "Internal server error");
-        }
-    }
 
-    /// <summary>
-    /// Create a new customer
-    /// </summary>
-    /// <param name="dto">Customer creation data</param>
-    /// <returns>Created customer details</returns>
-    [HttpPost]
-    [Authorize(Roles = "Admin,Manager")]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CustomerDto))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<CustomerDto>> Create(CreateCustomerDto dto)
-    {
-        try
+        /// <summary>
+        /// Create a new customer.
+        /// </summary>
+        /// <param name="createCustomerDto">The customer data.</param>
+        /// <returns>The created customer details.</returns>
+        [HttpPost]
+        public async Task<ActionResult<CustomerDto>> CreateCustomer(CreateCustomerDto createCustomerDto)
         {
-            var createdCustomer = await _customerService.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = createdCustomer.Id }, createdCustomer);
+            var customer = await _customerService.CreateAsync(createCustomerDto);
+            return CreatedAtAction(nameof(GetCustomerById), new { id = customer.Id }, customer);
         }
-        catch (InvalidOperationException ex)
-        {
-            _logger.LogWarning(ex, "Validation error during customer creation");
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error creating customer");
-            return StatusCode(500, "Internal server error");
-        }
-    }
 
-    /// <summary>
-    /// Update an existing customer
-    /// </summary>
-    /// <param name="id">Customer ID</param>
-    /// <param name="dto">Updated customer data</param>
-    /// <returns>Updated customer details</returns>
-    [HttpPut("{id}")]
-    [Authorize(Roles = "Admin,Manager")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CustomerDto))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<CustomerDto>> Update(Guid id, UpdateCustomerDto dto)
-    {
-        try
+        /// <summary>
+        /// Update an existing customer.
+        /// </summary>
+        /// <param name="id">The ID of the customer to update.</param>
+        /// <param name="updateCustomerDto">The updated customer data.</param>
+        /// <returns>No content if successful.</returns>
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCustomer(Guid id, UpdateCustomerDto updateCustomerDto)
         {
-            var updatedCustomer = await _customerService.UpdateAsync(id, dto);
-            if (updatedCustomer == null)
-            {
-                return NotFound();
-            }
-            return Ok(updatedCustomer);
-        }
-        catch (InvalidOperationException ex)
-        {
-            _logger.LogWarning(ex, "Validation error during customer update for ID: {CustomerId}", id);
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error updating customer with ID: {CustomerId}", id);
-            return StatusCode(500, "Internal server error");
-        }
-    }
-
-    /// <summary>
-    /// Delete a customer
-    /// </summary>
-    /// <param name="id">Customer ID</param>
-    /// <returns>Success or error message</returns>
-    [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Delete(Guid id)
-    {
-        try
-        {
-            var result = await _customerService.DeleteAsync(id);
-            if (!result)
-            {
-                return NotFound();
-            }
+            await _customerService.UpdateAsync(id, updateCustomerDto);
             return NoContent();
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error deleting customer with ID: {CustomerId}", id);
-            return StatusCode(500, "Internal server error");
-        }
-    }
 
-    /// <summary>
-    /// Search for customers
-    /// </summary>
-    /// <param name="searchTerm">Search term</param>
-    /// <returns>List of matching customers</returns>
-    [HttpGet("search")]
-    [Authorize(Roles = "Admin,Manager,Sales")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CustomerDto>))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<CustomerDto>>> Search([FromQuery] string searchTerm)
-    {
-        try
+        /// <summary>
+        /// Soft delete a customer by ID.
+        /// </summary>
+        /// <param name="id">The ID of the customer to soft delete.</param>
+        /// <returns>No content if successful.</returns>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCustomer(Guid id)
         {
-            var customers = await _customerService.SearchAsync(searchTerm);
-            return Ok(customers);
+            await _customerService.DeleteAsync(id);
+            return NoContent();
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error searching customers with term: {SearchTerm}", searchTerm);
-            return StatusCode(500, "Internal server error");
-        }
-    }
 
-    /// <summary>
-    /// Get customers with advanced filtering and pagination
-    /// </summary>
-    /// <param name="dto">Search parameters</param>
-    /// <returns>Paged list of customers</returns>
-    [HttpPost("search")]
-    [Authorize(Roles = "Admin,Manager,Sales")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CustomerPagedResultDto))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<CustomerPagedResultDto>> SearchPaged(CustomerSearchDto dto)
-    {
-        try
+        /// <summary>
+        /// Get customer order history.
+        /// </summary>
+        /// <param name="id">The ID of the customer.</param>
+        /// <returns>A list of customer orders.</returns>
+        [HttpGet("{id}/orders")]
+        public async Task<ActionResult<IEnumerable<OrderDto>>> GetCustomerOrders(Guid id)
         {
-            var result = await _customerService.SearchPagedAsync(dto);
-            return Ok(result);
+            var orders = await _customerService.GetOrderHistoryAsync(id);
+            return Ok(orders);
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error searching customers with paging");
-            return StatusCode(500, "Internal server error");
-        }
-    }
 
-    /// <summary>
-    /// Get customers by type
-    /// </summary>
-    /// <param name="type">Customer type</param>
-    /// <returns>List of customers of specified type</returns>
-    [HttpGet("by-type/{type}")]
-    [Authorize(Roles = "Admin,Manager,Sales")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CustomerDto>))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<CustomerDto>>> GetByType(string type)
-    {
-        try
+        /// <summary>
+        /// Get customer credit status.
+        /// </summary>
+        /// <param name="id">The ID of the customer.</param>
+        /// <returns>The customer's credit status.</returns>
+        [HttpGet("{id}/credit-status")]
+        public async Task<ActionResult<CustomerCreditStatusDto>> GetCustomerCreditStatus(Guid id)
         {
-            var customers = await _customerService.GetByTypeAsync(type);
-            return Ok(customers);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting customers by type: {Type}", type);
-            return StatusCode(500, "Internal server error");
-        }
-    }
-
-    /// <summary>
-    /// Get customers by category
-    /// </summary>
-    /// <param name="category">Customer category</param>
-    /// <returns>List of customers of specified category</returns>
-    [HttpGet("by-category/{category}")]
-    [Authorize(Roles = "Admin,Manager,Sales")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CustomerDto>))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<CustomerDto>>> GetByCategory(string category)
-    {
-        try
-        {
-            var customers = await _customerService.GetByCategoryAsync(category);
-            return Ok(customers);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting customers by category: {Category}", category);
-            return StatusCode(500, "Internal server error");
-        }
-    }
-
-    /// <summary>
-    /// Get active customers
-    /// </summary>
-    /// <returns>List of active customers</returns>
-    [HttpGet("active")]
-    [Authorize(Roles = "Admin,Manager,Sales")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CustomerDto>))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<CustomerDto>>> GetActive()
-    {
-        try
-        {
-            var customers = await _customerService.GetActiveCustomersAsync();
-            return Ok(customers);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting active customers");
-            return StatusCode(500, "Internal server error");
-        }
-    }
-
-    /// <summary>
-    /// Update a customer's credit limit
-    /// </summary>
-    /// <param name="id">Customer ID</param>
-    /// <param name="creditLimit">New credit limit</param>
-    /// <returns>Success status</returns>
-    [HttpPut("{id}/credit-limit")]
-    [Authorize(Roles = "Admin,Manager")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UpdateCreditLimit(Guid id, [FromBody] decimal creditLimit)
-    {
-        try
-        {
-            var result = await _customerService.UpdateCreditLimitAsync(id, creditLimit);
-            if (!result)
+            var creditStatus = await _customerService.GetCreditStatusAsync(id);
+            if (creditStatus == null)
             {
                 return NotFound();
             }
-            return Ok();
+            return Ok(creditStatus);
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error updating credit limit for customer with ID: {CustomerId}", id);
-            return StatusCode(500, "Internal server error");
-        }
-    }
 
-    /// <summary>
-    /// Activate a customer
-    /// </summary>
-    /// <param name="id">Customer ID</param>
-    /// <returns>Success status</returns>
-    [HttpPut("{id}/activate")]
-    [Authorize(Roles = "Admin,Manager")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Activate(Guid id)
-    {
-        try
+        /// <summary>
+        /// Get location data for mapping customers.
+        /// </summary>
+        /// <returns>A list of customer location data.</returns>
+        [HttpGet("map-data")]
+        public async Task<ActionResult<IEnumerable<CustomerMapDataDto>>> GetCustomerMapData()
         {
-            var result = await _customerService.ActivateCustomerAsync(id);
-            if (!result)
-            {
-                return NotFound();
-            }
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error activating customer with ID: {CustomerId}", id);
-            return StatusCode(500, "Internal server error");
-        }
-    }
-
-    /// <summary>
-    /// Deactivate a customer
-    /// </summary>
-    /// <param name="id">Customer ID</param>
-    /// <returns>Success status</returns>
-    [HttpPut("{id}/deactivate")]
-    [Authorize(Roles = "Admin,Manager")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Deactivate(Guid id)
-    {
-        try
-        {
-            var result = await _customerService.DeactivateCustomerAsync(id);
-            if (!result)
-            {
-                return NotFound();
-            }
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error deactivating customer with ID: {CustomerId}", id);
-            return StatusCode(500, "Internal server error");
-        }
-    }
-
-    /// <summary>
-    /// Get all customer types
-    /// </summary>
-    /// <returns>List of customer types</returns>
-    [HttpGet("types")]
-    [Authorize(Roles = "Admin,Manager,Sales")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<string>>> GetCustomerTypes()
-    {
-        try
-        {
-            var types = await _customerService.GetCustomerTypesAsync();
-            return Ok(types);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting customer types");
-            return StatusCode(500, "Internal server error");
-        }
-    }
-
-    /// <summary>
-    /// Get all customer categories
-    /// </summary>
-    /// <returns>List of customer categories</returns>
-    [HttpGet("categories")]
-    [Authorize(Roles = "Admin,Manager,Sales")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<string>>> GetCustomerCategories()
-    {
-        try
-        {
-            var categories = await _customerService.GetCustomerCategoriesAsync();
-            return Ok(categories);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting customer categories");
-            return StatusCode(500, "Internal server error");
-        }
-    }
-
-    /// <summary>
-    /// Check if an email is already in use
-    /// </summary>
-    /// <param name="email">Email to check</param>
-    /// <param name="excludeId">Optional customer ID to exclude from check</param>
-    /// <returns>True if email is available</returns>
-    [HttpGet("validate-email")]
-    [Authorize(Roles = "Admin,Manager")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<bool>> ValidateEmail([FromQuery] string email, [FromQuery] Guid? excludeId = null)
-    {
-        try
-        {
-            var isValid = await _customerService.ValidateEmailAsync(email, excludeId);
-            return Ok(isValid);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error validating email: {Email}", email);
-            return StatusCode(500, "Internal server error");
-        }
-    }
-
-    /// <summary>
-    /// Check if a tax ID is already in use
-    /// </summary>
-    /// <param name="taxId">Tax ID to check</param>
-    /// <param name="excludeId">Optional customer ID to exclude from check</param>
-    /// <returns>True if tax ID is available</returns>
-    [HttpGet("validate-taxid")]
-    [Authorize(Roles = "Admin,Manager")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<bool>> ValidateTaxId([FromQuery] string taxId, [FromQuery] Guid? excludeId = null)
-    {
-        try
-        {
-            var isValid = await _customerService.ValidateTaxIdAsync(taxId, excludeId);
-            return Ok(isValid);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error validating tax ID: {TaxId}", taxId);
-            return StatusCode(500, "Internal server error");
+            var mapData = await _customerService.GetMapDataAsync();
+            return Ok(mapData);
         }
     }
 }

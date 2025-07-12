@@ -593,4 +593,88 @@ public class ReportsService : IReportsService
             throw;
         }
     }
+
+    public async Task<DashboardSummaryDto> GetDashboardSummaryAsync()
+    {
+        // Placeholder: Replace with real analytics logic
+        var allOrders = await _orderRepository.GetAllAsync();
+        var allCustomers = await _customerRepository.GetAllAsync();
+        var today = DateTime.UtcNow.Date;
+        return new DashboardSummaryDto
+        {
+            TotalOrders = allOrders.Count(),
+            TotalCustomers = allCustomers.Count(),
+            TotalRevenue = allOrders.Sum(o => o.TotalAmount),
+            ActiveCustomers = allCustomers.Count(c => c.IsActive),
+            NewCustomers = allCustomers.Count(c => c.CreatedAt.Date == today),
+            OrdersToday = allOrders.Count(o => o.OrderDate.Date == today),
+            RevenueToday = allOrders.Where(o => o.OrderDate.Date == today).Sum(o => o.TotalAmount)
+        };
+    }
+
+    public async Task<SalesPerformanceDto> GetSalesPerformanceAsync()
+    {
+        // Placeholder: Replace with real analytics logic
+        var allOrders = await _orderRepository.GetAllAsync();
+        var totalSales = allOrders.Sum(o => o.TotalAmount);
+        var totalOrders = allOrders.Count();
+        var avgOrderValue = totalOrders > 0 ? totalSales / totalOrders : 0;
+        return new SalesPerformanceDto
+        {
+            TotalSales = totalSales,
+            TotalOrders = totalOrders,
+            AverageOrderValue = avgOrderValue,
+            SalesTarget = 100000, // Example static target
+            SalesTargetProgress = totalSales / 100000m * 100,
+            Period = DateTime.UtcNow.Month
+        };
+    }
+
+    public async Task<IEnumerable<TopProductDto>> GetTopProductsAsync()
+    {
+        // Placeholder: Replace with real analytics logic
+        var allOrders = await _orderRepository.GetAllAsync();
+        var orderItems = allOrders.SelectMany(o => o.OrderItems);
+        var topProducts = orderItems
+            .GroupBy(i => new { i.ProductSku, i.ProductName })
+            .Select(g => new TopProductDto
+            {
+                ProductId = g.Key.ProductSku,
+                ProductName = g.Key.ProductName,
+                QuantitySold = g.Sum(i => i.Quantity),
+                TotalRevenue = g.Sum(i => i.LineTotal)
+            })
+            .OrderByDescending(p => p.TotalRevenue)
+            .Take(10)
+            .ToList();
+        return topProducts;
+    }
+
+    public async Task<CustomerInsightsDto> GetCustomerInsightsAsync()
+    {
+        // Placeholder: Replace with real analytics logic
+        var allCustomers = (await _customerRepository.GetAllAsync()).ToList();
+        var allOrders = (await _orderRepository.GetAllAsync()).ToList();
+        var today = DateTime.UtcNow.Date;
+        var newCustomers = allCustomers.Count(c => c.CreatedAt.Date == today);
+        // returningCustomers, churnedCustomers, loyalCustomers are set to 0 as placeholders
+        var returningCustomers = 0;
+        var churnedCustomers = 0;
+        var loyalCustomers = 0;
+        var avgOrderValue = allOrders.Any() ? allOrders.Average(o => o.TotalAmount) : 0;
+        var topCategory = allCustomers
+            .GroupBy(c => c.CustomerCategory)
+            .OrderByDescending(g => g.Count())
+            .FirstOrDefault()?.Key ?? string.Empty;
+        return new CustomerInsightsDto
+        {
+            TotalCustomers = allCustomers.Count,
+            NewCustomersThisPeriod = newCustomers,
+            ReturningCustomers = returningCustomers,
+            AverageOrderValue = avgOrderValue,
+            ChurnedCustomers = churnedCustomers,
+            TopCustomerCategory = topCategory,
+            LoyalCustomers = loyalCustomers
+        };
+    }
 }

@@ -3,10 +3,15 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authorization;
+using SalesService.Api.Authorization;
 using SalesService.Application.Extensions;
 using SalesService.Infrastructure.Extensions;
+// using SalesService.Infrastructure.Clients;
 using SalesService.Infrastructure.Data;
 using SalesService.Api.Services;
+using SalesService.Application.Interfaces;
+// using SalesService.Application.Services;
 
 public class Program
 {
@@ -29,6 +34,15 @@ public class Program
 
         // Register infrastructure services
         builder.Services.AddInfrastructureServices(builder.Configuration);
+
+        // Register gRPC clients
+        builder.Services.AddSingleton<IInventoryServiceClient, SalesService.Application.Services.ServiceClients.InventoryServiceClient>();
+
+        // Register notification queue service
+        builder.Services.AddSingleton<SalesService.Application.Services.INotificationQueueService, SalesService.Application.Services.NotificationQueueService>();
+
+        // Register background services
+        builder.Services.AddHostedService<NotificationBackgroundService>();
 
         // Configure JWT authentication
         builder.Services.AddAuthentication(options =>
@@ -99,6 +113,15 @@ public class Program
                     new List<string>()
                 }
             });
+        });
+
+        builder.Services.AddAuthorization(options =>
+        {
+            options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAssertion(context =>
+                    context.Resource is HttpContext httpContext &&
+                    PublicEndpointsRequirement.IsPublicEndpoint(httpContext))
+                .Build();
         });
 
         var app = builder.Build();

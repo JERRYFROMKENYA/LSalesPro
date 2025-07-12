@@ -31,4 +31,9 @@ public interface ICustomerService
     Task<bool> UpdateCreditLimitAsync(Guid id, decimal newCreditLimit);
     Task<bool> ActivateCustomerAsync(Guid id);
     Task<bool> DeactivateCustomerAsync(Guid id);
+
+    // New methods for API usage
+    Task<IEnumerable<OrderDto>> GetOrderHistoryAsync(Guid customerId);
+    Task<CustomerCreditStatusDto> GetCreditStatusAsync(Guid customerId);
+    Task<IEnumerable<CustomerMapDataDto>> GetMapDataAsync();
 }

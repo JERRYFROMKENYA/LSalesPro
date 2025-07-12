@@ -13,4 +13,5 @@ public interface IRoleRepository
     Task<bool> ExistsAsync(Guid id);
     Task<Role?> GetRoleWithPermissionsAsync(Guid id);
     Task<IEnumerable<Role>> GetActiveRolesAsync();
+    Task AddAsync(Role role);
 }

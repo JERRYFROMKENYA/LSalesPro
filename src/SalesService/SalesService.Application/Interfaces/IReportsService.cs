@@ -20,4 +20,10 @@ public interface IReportsService
     Task<SalesPerformanceReportDto> GetSalesPerformanceReportAsync(DateRangeDto dateRange);
     Task<List<SalesPerformanceByProductDto>> GetProductPerformanceReportAsync(DateRangeDto dateRange);
     Task<List<SalesPerformanceByCustomerCategoryDto>> GetCustomerCategoryPerformanceReportAsync(DateRangeDto dateRange);
+
+    // Dashboard Analytics
+    Task<DashboardSummaryDto> GetDashboardSummaryAsync();
+    Task<SalesPerformanceDto> GetSalesPerformanceAsync();
+    Task<IEnumerable<TopProductDto>> GetTopProductsAsync();
+    Task<CustomerInsightsDto> GetCustomerInsightsAsync();
 }

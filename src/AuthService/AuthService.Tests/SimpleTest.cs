@@ -4,6 +4,7 @@ using AuthService.Infrastructure.Services;
 using AuthService.Application.Services;
 using AuthService.Application.DTOs;
 using Microsoft.EntityFrameworkCore;
+using PasswordService = AuthService.Application.Services.PasswordService;
 
 class SimpleTest
 {

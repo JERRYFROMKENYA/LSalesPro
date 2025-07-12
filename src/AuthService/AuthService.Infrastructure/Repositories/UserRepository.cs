@@ -104,4 +104,14 @@ public class UserRepository : IUserRepository
             .ThenInclude(ur => ur.Role)
             .ToListAsync();
     }
+
+    public async Task<User?> GetUserWithRolesAndPermissionsAsync(Guid id)
+    {
+        return await _context.Users
+            .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                    .ThenInclude(r => r.RolePermissions)
+                        .ThenInclude(rp => rp.Permission)
+            .FirstOrDefaultAsync(u => u.Id == id);
+    }
 }

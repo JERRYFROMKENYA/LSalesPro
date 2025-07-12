@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 
 namespace AuthService.Infrastructure.Services;
 
-public class PasswordService : IPasswordService
+public class InfrastructurePasswordService : IPasswordService
 {
     public string HashPassword(string password)
     {
@@ -38,5 +38,16 @@ public class PasswordService : IPasswordService
 
         var expiry = createdAt.Add(validityPeriod);
         return DateTime.UtcNow <= expiry;
+    }
+    public bool ValidatePassword(string password)
+    {
+        if (string.IsNullOrEmpty(password)) return false;
+
+        var hasMinimumLength = password.Length >= 8;
+        var hasUpperCase = password.Any(char.IsUpper);
+        var hasNumber = password.Any(char.IsDigit);
+        var hasSpecialCharacter = password.Any(ch => !char.IsLetterOrDigit(ch));
+
+        return hasMinimumLength && hasUpperCase && hasNumber && hasSpecialCharacter;
     }
 }

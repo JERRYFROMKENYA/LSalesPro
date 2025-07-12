@@ -305,4 +305,44 @@ public class CustomerService : ICustomerService
         
         return true;
     }
+
+    // Stub implementations for new interface methods
+    public async Task<IEnumerable<OrderDto>> GetOrderHistoryAsync(Guid customerId)
+    {
+        // TODO: Implement actual logic
+        return new List<OrderDto>();
+    }
+
+    public async Task<CustomerCreditStatusDto> GetCreditStatusAsync(Guid customerId)
+    {
+        // TODO: Implement actual logic
+        var customer = await _customerRepository.GetByIdAsync(customerId);
+        if (customer == null)
+        {
+            return null; // Or throw an exception
+        }
+
+        return new CustomerCreditStatusDto
+        {
+            CustomerId = customer.Id,
+            CreditLimit = customer.CreditLimit,
+            CurrentBalance = customer.CurrentBalance,
+            AvailableCredit = customer.AvailableCredit,
+            HasCreditLimit = customer.HasCreditLimit,
+            IsCreditAvailable = customer.AvailableCredit > 0
+        };
+    }
+
+    public async Task<IEnumerable<CustomerMapDataDto>> GetMapDataAsync()
+    {
+        var customers = await _customerRepository.GetAllAsync();
+        return customers.Select(c => new CustomerMapDataDto
+        {
+            CustomerId = c.Id,
+            CustomerName = c.Name,
+            Latitude = c.Latitude ?? 0,
+            Longitude = c.Longitude ?? 0,
+            Address = c.Address ?? string.Empty
+        });
+    }
 }

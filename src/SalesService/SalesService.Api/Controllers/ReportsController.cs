@@ -365,4 +365,96 @@ public class ReportsController : ControllerBase
             return StatusCode(500, "Internal server error");
         }
     }
+
+    /// <summary>
+    /// Get dashboard summary metrics
+    /// </summary>
+    /// <returns>Dashboard summary data</returns>
+    [HttpGet("/api/v1/dashboard/summary")]
+    [Authorize(Roles = "Admin,Manager,SalesManager,SalesRepresentative")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DashboardSummaryDto))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<DashboardSummaryDto>> GetDashboardSummary()
+    {
+        try
+        {
+            var summary = await _reportsService.GetDashboardSummaryAsync();
+            return Ok(summary);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting dashboard summary");
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    /// <summary>
+    /// Get sales performance data
+    /// </summary>
+    /// <returns>Sales performance data</returns>
+    [HttpGet("/api/v1/dashboard/sales-performance")]
+    [Authorize(Roles = "Admin,Manager,SalesManager,SalesRepresentative")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SalesPerformanceDto))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<SalesPerformanceDto>> GetSalesPerformance()
+    {
+        try
+        {
+            var performance = await _reportsService.GetSalesPerformanceAsync();
+            return Ok(performance);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting sales performance");
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    /// <summary>
+    /// Get top products (best sellers)
+    /// </summary>
+    /// <returns>List of top products</returns>
+    [HttpGet("/api/v1/dashboard/top-products")]
+    [Authorize(Roles = "Admin,Manager,SalesManager,SalesRepresentative")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TopProductDto>))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<IEnumerable<TopProductDto>>> GetTopProducts()
+    {
+        try
+        {
+            var topProducts = await _reportsService.GetTopProductsAsync();
+            return Ok(topProducts);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting top products");
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    /// <summary>
+    /// Get customer insights analytics
+    /// </summary>
+    /// <returns>Customer insights data</returns>
+    [HttpGet("/api/v1/dashboard/customer-insights")]
+    [Authorize(Roles = "Admin,Manager,SalesManager,SalesRepresentative")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CustomerInsightsDto))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<CustomerInsightsDto>> GetCustomerInsights()
+    {
+        try
+        {
+            var insights = await _reportsService.GetCustomerInsightsAsync();
+            return Ok(insights);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting customer insights");
+            return StatusCode(500, "Internal server error");
+        }
+    }
 }

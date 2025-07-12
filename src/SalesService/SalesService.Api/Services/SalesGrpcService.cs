@@ -193,6 +193,7 @@ namespace SalesService.Api.Services
 
         public override async Task<CreateOrderResponse> CreateOrder(CreateOrderRequest request, ServerCallContext context)
         {
+            _logger.LogInformation("CreateOrder called with customer ID: {CustomerId}", request.CustomerId);
             try
             {
                 var customerId = Guid.Parse(request.CustomerId);
@@ -221,10 +222,13 @@ namespace SalesService.Api.Services
                 };
 
                 // Create the order
+                _logger.LogInformation("Calling _orderService.CreateAsync");
                 var result = await _orderService.CreateAsync(createOrderDto);
+                _logger.LogInformation("Returned from _orderService.CreateAsync");
                 
                 if (!result.Success)
                 {
+                    _logger.LogWarning("Order creation failed: {ErrorMessage}", result.ErrorMessage ?? result.Message);
                     return new CreateOrderResponse
                     {
                         Success = false,
@@ -236,6 +240,7 @@ namespace SalesService.Api.Services
                 var order = result.Order;
                 if (order == null)
                 {
+                    _logger.LogError("Order created successfully but no order details returned.");
                     return new CreateOrderResponse
                     {
                         Success = false,
@@ -254,10 +259,12 @@ namespace SalesService.Api.Services
                     OrderDate = Timestamp.FromDateTime(order.OrderDate.ToUniversalTime())
                 };
 
+                _logger.LogInformation("Order created successfully: {OrderId}", response.OrderId);
                 return response;
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
+                _logger.LogError(ex, "Invalid ID format in CreateOrder");
                 return new CreateOrderResponse
                 {
                     Success = false,

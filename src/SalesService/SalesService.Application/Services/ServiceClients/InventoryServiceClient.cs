@@ -41,7 +41,7 @@ public class InventoryServiceClient : IInventoryServiceClient, IDisposable
         }
     }
 
-    public async Task<ProductAvailabilityResultDto> CheckProductAvailabilityAsync(string productId, int quantity, string? warehouseId = null)
+    public async Task<ProductAvailabilityDto> CheckProductAvailabilityAsync(string productId, int quantity, string? warehouseId = null)
     {
         try
         {
@@ -58,56 +58,48 @@ public class InventoryServiceClient : IInventoryServiceClient, IDisposable
 
             var response = await _client.CheckProductAvailabilityAsync(request);
 
-            return new ProductAvailabilityResultDto
+            return new ProductAvailabilityDto
             {
                 ProductId = productId,
                 IsAvailable = response.IsAvailable,
                 AvailableQuantity = response.AvailableQuantity,
-                WarehouseStocks = response.WarehouseStocks.Select(ws => new WarehouseStockDto
-                {
-                    WarehouseId = ws.WarehouseId,
-                    WarehouseName = ws.WarehouseName,
-                    AvailableQuantity = ws.AvailableQuantity,
-                    ReservedQuantity = ws.ReservedQuantity,
-                    TotalQuantity = ws.TotalQuantity
-                }).ToList(),
-                ErrorMessage = response.ErrorMessage
+                // WarehouseId is not present in response; if needed, get from warehouse_stocks or use input warehouseId
+                WarehouseId = warehouseId, // fallback to input value
+                Message = response.ErrorMessage
             };
         }
         catch (RpcException ex)
         {
             _logger.LogError(ex, "Error checking product availability for ProductId: {ProductId}, Quantity: {Quantity}, WarehouseId: {WarehouseId}", 
                 productId, quantity, warehouseId);
-            
-            return new ProductAvailabilityResultDto
+            return new ProductAvailabilityDto
             {
                 ProductId = productId,
                 IsAvailable = false,
                 AvailableQuantity = 0,
-                ErrorMessage = $"Error: {ex.Status.Detail}"
+                WarehouseId = warehouseId,
+                Message = $"Error: {ex.Status.Detail}"
             };
         }
     }
 
-    public async Task<List<ProductAvailabilityResultDto>> CheckProductsAvailabilityAsync(List<ProductAvailabilityRequestDto> requests)
+    public async Task<IEnumerable<ProductAvailabilityDto>> CheckProductsAvailabilityAsync(IEnumerable<ProductAvailabilityRequestDto> requests)
     {
-        var results = new List<ProductAvailabilityResultDto>();
-        
+        var results = new List<ProductAvailabilityDto>();
         foreach (var request in requests)
         {
-            // Process requests in sequence to avoid overwhelming the gRPC service
             var result = await CheckProductAvailabilityAsync(
-                request.ProductId, 
+                request.ProductId,
                 request.Quantity,
-                request.WarehouseId);
-                
+                request.WarehouseId
+            );
             results.Add(result);
         }
-        
         return results;
     }
 
-    public async Task<StockReservationResultDto> ReserveStockAsync(StockReservationRequestDto request)
+    public async Task<StockReservationResultDto> ReserveStockAsync(StockReservationRequestDto request
+    )
     {
         try
         {
@@ -169,6 +161,36 @@ public class InventoryServiceClient : IInventoryServiceClient, IDisposable
         {
             _logger.LogError(ex, "Error releasing stock reservation: {ReservationId}", reservationId);
             return false;
+        }
+    }
+
+    public async Task<ProductPricingDto?> GetProductPricingInformationAsync(string productId)
+    {
+        try
+        {
+            var request = new GetProductDetailsRequest
+            {
+                ProductId = productId
+            };
+
+            var response = await _client.GetProductDetailsAsync(request);
+
+            if (response == null || response.Product == null || string.IsNullOrEmpty(response.Product.Id))
+            {
+                return null;
+            }
+
+            return new ProductPricingDto
+            {
+                ProductId = response.Product.Id,
+                UnitPrice = (decimal)response.Product.UnitPrice,
+                TaxRate = (decimal)response.Product.TaxRate
+            };
+        }
+        catch (RpcException ex)
+        {
+            _logger.LogError(ex, "Error getting product pricing information for ProductId: {ProductId}", productId);
+            return null;
         }
     }
 

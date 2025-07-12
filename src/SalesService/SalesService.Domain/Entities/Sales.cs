@@ -201,48 +201,4 @@ public class OrderItem
     public virtual Order Order { get; set; } = null!;
 }
 
-public class Notification
-{
-    public Guid Id { get; set; } = Guid.NewGuid();
-    
-    [Required]
-    [MaxLength(50)]
-    public string Type { get; set; } = string.Empty; // OrderConfirmation, LowStock, PasswordReset, etc.
-    
-    [Required]
-    [MaxLength(200)]
-    public string Title { get; set; } = string.Empty;
-    
-    [Required]
-    [MaxLength(1000)]
-    public string Message { get; set; } = string.Empty;
-    
-    [MaxLength(100)]
-    public string? RecipientId { get; set; }
-    
-    [EmailAddress]
-    [MaxLength(256)]
-    public string? RecipientEmail { get; set; }
-    
-    [MaxLength(50)]
-    public string Priority { get; set; } = "Normal"; // Low, Normal, High, Critical
-    
-    public bool IsRead { get; set; } = false;
-    
-    public DateTime? ReadAt { get; set; }
-    
-    public bool IsSent { get; set; } = false;
-    
-    public DateTime? SentAt { get; set; }
-    
-    [MaxLength(500)]
-    public string? ErrorMessage { get; set; }
-    
-    public int RetryCount { get; set; } = 0;
-    
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    
-    // JSON data for additional context
-    [Column(TypeName = "TEXT")]
-    public string? Data { get; set; }
-}
+

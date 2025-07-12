@@ -86,5 +86,35 @@ namespace SalesService.Tests
             // Assert
             Assert.Null(result);
         }
+
+        [Fact]
+        public async Task CreateAsync_ExceedsCreditLimit_ReturnsCreditLimitExceeded()
+        {
+            // Arrange
+            var customerId = Guid.NewGuid();
+            var customer = new Customer
+            {
+                Id = customerId,
+                IsActive = true,
+                CreditLimit = 1000m,
+                CurrentBalance = 900m // AvailableCredit = 100
+            };
+            _customerRepositoryMock.Setup(r => r.GetByIdAsync(customerId)).ReturnsAsync(customer);
+            var createOrderDto = new CreateOrderDto
+            {
+                CustomerId = customerId,
+                TotalAmount = 200m, // Exceeds available credit
+                Items = new List<CreateOrderItemDto>()
+            };
+            var service = CreateService();
+
+            // Act
+            var result = await service.CreateAsync(createOrderDto);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Equal("CREDIT_LIMIT_EXCEEDED", result.ErrorCode);
+            Assert.Contains("credit", result.Message, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

@@ -16,4 +16,6 @@ public interface IUserService
     Task<bool> ValidatePasswordAsync(string username, string password);
     Task AssignRolesToUserAsync(Guid userId, List<Guid> roleIds);
     Task RemoveRolesFromUserAsync(Guid userId, List<Guid> roleIds);
+    Task RegisterAsync(RegisterDto registerDto);
+    Task<List<string>> GetUserPermissionsAsync(string userId);
 }

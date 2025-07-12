@@ -16,4 +16,5 @@ public interface IUserRepository
     Task<bool> EmailExistsAsync(string email);
     Task<User?> GetUserWithRolesAsync(Guid id);
     Task<IEnumerable<User>> GetActiveUsersAsync();
+    Task<User?> GetUserWithRolesAndPermissionsAsync(Guid id);
 }

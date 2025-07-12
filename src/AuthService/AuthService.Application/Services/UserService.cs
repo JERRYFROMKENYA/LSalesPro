@@ -209,6 +209,81 @@ public class UserService : IUserService
         await _userRepository.UpdateAsync(user);
     }
 
+    public async Task RegisterAsync(RegisterDto registerDto)
+    {
+        // Validate if username or email already exists
+        var existingUserByUsername = await _userRepository.GetByUsernameAsync(registerDto.Username);
+        if (existingUserByUsername != null)
+        {
+            throw new ArgumentException("Username already exists.");
+        }
+
+        var existingUserByEmail = await _userRepository.GetByEmailAsync(registerDto.Email);
+        if (existingUserByEmail != null)
+        {
+            throw new ArgumentException("Email already exists.");
+        }
+
+        // Hash the password
+        var passwordHash = _passwordService.HashPassword(registerDto.Password);
+
+        // Create new user entity
+        var newUser = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = registerDto.Username,
+            Email = registerDto.Email,
+            PasswordHash = passwordHash,
+            IsActive = true,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        // Save user to the repository
+        await _userRepository.CreateAsync(newUser);
+    }
+
+    public async Task AssignDefaultRoleIfMissingAsync(Guid userId)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null) throw new ArgumentException("User not found.");
+
+        if (!user.UserRoles.Any())
+        {
+            var defaultRole = await _roleRepository.GetByNameAsync("SalesManager");
+            if (defaultRole == null)
+            {
+                defaultRole = new Role { Name = "SalesManager" };
+                await _roleRepository.AddAsync(defaultRole);
+            }
+
+            user.UserRoles.Add(new UserRole { UserId = user.Id, RoleId = defaultRole.Id });
+            await _userRepository.UpdateAsync(user);
+        }
+    }
+
+    public async Task<List<string>> GetUserPermissionsAsync(string userId)
+    {
+        if (!Guid.TryParse(userId, out Guid userGuid))
+        {
+            throw new ArgumentException("Invalid user ID format.");
+        }
+
+        var user = await _userRepository.GetUserWithRolesAndPermissionsAsync(userGuid);
+        if (user == null)
+        {
+            throw new InvalidOperationException($"User with ID '{userId}' not found.");
+        }
+
+        var permissions = user.UserRoles
+            .SelectMany(ur => ur.Role.RolePermissions)
+            .Select(rp => rp.Permission.Name)
+            .Distinct()
+            .ToList();
+
+        return permissions;
+    }
+
     private static UserDto MapToUserDto(User user)
     {
         return new UserDto
@@ -218,6 +293,7 @@ public class UserService : IUserService
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
+            Role = string.Join(", ", user.GetRoleNames()),
             IsActive = user.IsActive,
             CreatedAt = user.CreatedAt,
             UpdatedAt = user.UpdatedAt,

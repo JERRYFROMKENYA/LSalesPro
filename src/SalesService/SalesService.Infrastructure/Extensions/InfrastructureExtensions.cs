@@ -21,7 +21,7 @@ public static class InfrastructureExtensions
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IOrderItemRepository, OrderItemRepository>();
-        services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<SalesService.Domain.Interfaces.INotificationRepository, NotificationRepository>();
         
         // Register database initializer
         services.AddScoped<ISalesDbInitializer, SalesDbInitializer>();

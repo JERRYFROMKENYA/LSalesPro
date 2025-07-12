@@ -6,4 +6,5 @@ public interface IPasswordService
     bool VerifyPassword(string password, string hashedPassword);
     string GenerateResetToken();
     bool ValidateResetToken(string token, DateTime createdAt, TimeSpan validityPeriod);
+    bool ValidatePassword(string password);
 }

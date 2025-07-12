@@ -9,12 +9,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using AuthService.Api.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// Add in-memory caching
+builder.Services.AddMemoryCache();
 
 // Add gRPC services
 builder.Services.AddGrpc(options =>
@@ -82,7 +86,12 @@ builder.Services.AddSwaggerGen(c =>
 
 // Configure Entity Framework
 builder.Services.AddDbContext<AuthDbContext>(options =>
-    options.UseInMemoryDatabase("AuthServiceDb"));
+{
+    if (!builder.Environment.IsEnvironment("Testing"))
+    {
+        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+    }
+});
 
 // Register repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -93,9 +102,10 @@ builder.Services.AddScoped<IPasswordResetTokenRepository, PasswordResetTokenRepo
 
 // Register services
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IPasswordService, PasswordService>();
+builder.Services.AddScoped<IPasswordService, AuthService.Application.Services.PasswordService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IAuthService, AuthService.Application.Services.AuthService>();
+builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
 
 // Configure JWT authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -132,33 +142,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Configure authorization policies
+// Add authorization policies
 builder.Services.AddAuthorization(options =>
 {
-    // Require authenticated user for all endpoints by default
-    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
+    options.AddPolicy("SalesManagerPolicy", policy =>
+        policy.RequireClaim("Role", "SalesManager"));
 
-    // Role-based policies
-    options.AddPolicy("SalesManagerOnly", policy =>
-        policy.RequireRole("Sales Manager"));
-
-    options.AddPolicy("SalesTeam", policy =>
-        policy.RequireRole("Sales Manager", "Sales Representative"));
-
-    // Permission-based policies
-    options.AddPolicy("ViewSales", policy =>
-        policy.RequireClaim("permission", "view_sales"));
-
-    options.AddPolicy("CreateSales", policy =>
-        policy.RequireClaim("permission", "create_sales"));
-
-    options.AddPolicy("ApproveSales", policy =>
-        policy.RequireClaim("permission", "approve_sales"));
-
-    options.AddPolicy("ManageInventory", policy =>
-        policy.RequireClaim("permission", "manage_inventory"));
+    options.AddPolicy("SalesTeamPolicy", policy =>
+        policy.RequireClaim("Role", "SalesManager", "SalesRepresentative"));
 });
 
 // Add CORS
@@ -190,7 +181,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapGrpcService<AuthService.Api.Services.AuthGrpcService>();
+app.MapGrpcService<AuthService.Api.Services.AuthService>();
 
 // Add health check endpoints
 app.MapHealthChecks("/health");

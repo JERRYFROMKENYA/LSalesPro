@@ -4,17 +4,9 @@ using System.Text;
 using AuthService.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using AuthService.Application.Interfaces;
 
 namespace AuthService.Application.Services;
-
-public interface IJwtTokenService
-{
-    Task<string> GenerateAccessTokenAsync(User user);
-    Task<RefreshToken> GenerateRefreshTokenAsync(User user);
-    Task<ClaimsPrincipal?> ValidateTokenAsync(string token);
-    Task<bool> ValidateRefreshTokenAsync(string token, Guid userId);
-    Task RevokeRefreshTokenAsync(string token);
-}
 
 public class JwtTokenService : IJwtTokenService
 {
@@ -35,7 +27,7 @@ public class JwtTokenService : IJwtTokenService
         _refreshTokenExpirationDays = int.Parse(_configuration["Jwt:RefreshTokenExpirationDays"] ?? "7");
     }
 
-    public Task<string> GenerateAccessTokenAsync(User user)
+    public async Task<string> GenerateAccessTokenAsync(User user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_secretKey);
@@ -45,42 +37,8 @@ public class JwtTokenService : IJwtTokenService
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.Username),
             new(ClaimTypes.Email, user.Email),
-            new(ClaimTypes.GivenName, user.FirstName),
-            new(ClaimTypes.Surname, user.LastName),
-            new("user_id", user.Id.ToString()),
-            new("username", user.Username),
-            new("email", user.Email)
+            new("role", string.Join(",", user.GetRoleNames()))
         };
-
-        // Add role claims
-        if (user.UserRoles != null && user.UserRoles.Any())
-        {
-            foreach (var userRole in user.UserRoles)
-            {
-                if (userRole.Role != null)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
-                }
-            }
-        }
-
-        // Add permission claims
-        if (user.UserRoles != null && user.UserRoles.Any())
-        {
-            foreach (var userRole in user.UserRoles)
-            {
-                if (userRole.Role?.RolePermissions != null)
-                {
-                    foreach (var rolePermission in userRole.Role.RolePermissions)
-                    {
-                        if (rolePermission.Permission != null)
-                        {
-                            claims.Add(new Claim("permission", rolePermission.Permission.Name));
-                        }
-                    }
-                }
-            }
-        }
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -92,7 +50,7 @@ public class JwtTokenService : IJwtTokenService
         };
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
-        return Task.FromResult(tokenHandler.WriteToken(token));
+        return tokenHandler.WriteToken(token);
     }
 
     public Task<RefreshToken> GenerateRefreshTokenAsync(User user)
@@ -108,14 +66,14 @@ public class JwtTokenService : IJwtTokenService
         return Task.FromResult(refreshToken);
     }
 
-    public Task<ClaimsPrincipal?> ValidateTokenAsync(string token)
+    public bool ValidateToken(string token)
     {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_secretKey);
+
         try
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_secretKey);
-
-            var validationParameters = new TokenValidationParameters
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
@@ -123,18 +81,44 @@ public class JwtTokenService : IJwtTokenService
                 ValidIssuer = _issuer,
                 ValidateAudience = true,
                 ValidAudience = _audience,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
+                ValidateLifetime = true
+            }, out SecurityToken validatedToken);
 
-            var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
-            return Task.FromResult<ClaimsPrincipal?>(principal);
+            return true;
         }
         catch
         {
-            return Task.FromResult<ClaimsPrincipal?>(null);
+            return false;
         }
     }
+
+    public async Task<ClaimsPrincipal?> ValidateTokenAsync(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_secretKey);
+
+        try
+        {
+            var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = true,
+                ValidIssuer = _issuer,
+                ValidateAudience = true,
+                ValidAudience = _audience,
+                ValidateLifetime = true
+            }, out _);
+
+            return principal;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
+    
 
     public Task<bool> ValidateRefreshTokenAsync(string token, Guid userId)
     {

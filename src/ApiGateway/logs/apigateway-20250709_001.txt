@@ -1,0 +1,130 @@
+2025-07-09 15:30:07.679 +03:00 [INF] User profile is available. Using 'C:\Users\jerry\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-09 15:30:08.381 +03:00 [INF] Loading proxy data from config.
+2025-07-09 15:30:08.887 +03:00 [INF] Starting L-SalesPro API Gateway
+2025-07-09 15:30:09.452 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address http://127.0.0.1:5000: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Only one usage of each socket address (protocol/network address/port) is normally permitted.
+ ---> System.Net.Sockets.SocketException (10048): Only one usage of each socket address (protocol/network address/port) is normally permitted.
+   at System.Net.Sockets.Socket.UpdateStatusAfterSocketErrorAndThrowException(SocketError error, Boolean disconnectOnFailure, String callerName)
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.EndpointsStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindAsync(ListenOptions[] listenOptions, AddressBindContext context, Func`2 useHttps, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-07-09 15:30:09.530 +03:00 [FTL] API Gateway terminated unexpectedly
+System.IO.IOException: Failed to bind to address http://127.0.0.1:5000: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Only one usage of each socket address (protocol/network address/port) is normally permitted.
+ ---> System.Net.Sockets.SocketException (10048): Only one usage of each socket address (protocol/network address/port) is normally permitted.
+   at System.Net.Sockets.Socket.UpdateStatusAfterSocketErrorAndThrowException(SocketError error, Boolean disconnectOnFailure, String callerName)
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.EndpointsStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindAsync(ListenOptions[] listenOptions, AddressBindContext context, Func`2 useHttps, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Program.<Main>$(String[] args) in C:\Users\jerry\Desktop\leysco_c_sharp\app\src\ApiGateway\Program.cs:line 122
+2025-07-09 15:30:41.700 +03:00 [INF] User profile is available. Using 'C:\Users\jerry\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-09 15:30:41.907 +03:00 [INF] Loading proxy data from config.
+2025-07-09 15:30:42.053 +03:00 [INF] Starting L-SalesPro API Gateway
+2025-07-09 15:30:42.399 +03:00 [INF] Now listening on: http://localhost:5000
+2025-07-09 15:30:42.402 +03:00 [INF] Now listening on: https://localhost:5009
+2025-07-09 15:30:42.409 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-09 15:30:42.414 +03:00 [INF] Hosting environment: Production
+2025-07-09 15:30:42.417 +03:00 [INF] Content root path: C:\Users\jerry\Desktop\leysco_c_sharp\app\src\ApiGateway
+2025-07-09 15:31:16.548 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/v1/auth/login - application/json 70
+2025-07-09 15:31:16.676 +03:00 [INF] Request 8f296907-1adc-4788-95c1-3fad96fcc2a6: POST /api/v1/auth/login from ::1
+2025-07-09 15:31:16.916 +03:00 [INF] Executing endpoint 'auth-route-v1'
+2025-07-09 15:31:17.038 +03:00 [INF] Proxying to http://localhost:5001/api/v1/auth/login HTTP/2 RequestVersionOrLower 
+2025-07-09 15:31:21.245 +03:00 [WRN] "Request": An error was encountered before receiving a response.
+System.Net.Http.HttpRequestException: No connection could be made because the target machine actively refused it. (localhost:5001)
+ ---> System.Net.Sockets.SocketException (10061): No connection could be made because the target machine actively refused it.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.AddHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Yarp.ReverseProxy.Forwarder.HttpForwarder.SendAsync(HttpContext context, String destinationPrefix, HttpMessageInvoker httpClient, ForwarderRequestConfig requestConfig, HttpTransformer transformer, CancellationToken cancellationToken)
+2025-07-09 15:31:21.285 +03:00 [INF] Executed endpoint 'auth-route-v1'
+2025-07-09 15:31:21.291 +03:00 [INF] Request 8f296907-1adc-4788-95c1-3fad96fcc2a6 completed: 502 in 4665ms
+2025-07-09 15:31:21.306 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/v1/auth/login - 502 0 null 4767.6924ms
+2025-07-09 15:36:11.744 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/v1/auth/login - application/json 70
+2025-07-09 15:36:11.753 +03:00 [INF] Request 0d612644-8a56-48bb-8bca-80e6eb66294d: POST /api/v1/auth/login from ::1
+2025-07-09 15:36:11.761 +03:00 [INF] Executing endpoint 'auth-route-v1'
+2025-07-09 15:36:11.768 +03:00 [INF] Proxying to http://localhost:5001/api/v1/auth/login HTTP/2 RequestVersionOrLower 
+2025-07-09 15:36:15.859 +03:00 [WRN] "Request": An error was encountered before receiving a response.
+System.Net.Http.HttpRequestException: No connection could be made because the target machine actively refused it. (localhost:5001)
+ ---> System.Net.Sockets.SocketException (10061): No connection could be made because the target machine actively refused it.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.AddHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Yarp.ReverseProxy.Forwarder.HttpForwarder.SendAsync(HttpContext context, String destinationPrefix, HttpMessageInvoker httpClient, ForwarderRequestConfig requestConfig, HttpTransformer transformer, CancellationToken cancellationToken)
+2025-07-09 15:36:15.873 +03:00 [INF] Executed endpoint 'auth-route-v1'
+2025-07-09 15:36:15.875 +03:00 [INF] Request 0d612644-8a56-48bb-8bca-80e6eb66294d completed: 502 in 4122ms
+2025-07-09 15:36:15.878 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/v1/auth/login - 502 0 null 4133.7984ms
+2025-07-09 15:41:32.602 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/v1/auth/login - application/json 70
+2025-07-09 15:41:32.611 +03:00 [INF] Request f28d81c2-ca90-4dc7-9a61-fd1274443d9e: POST /api/v1/auth/login from ::1
+2025-07-09 15:41:32.623 +03:00 [INF] Executing endpoint 'auth-route-v1'
+2025-07-09 15:41:32.627 +03:00 [INF] Proxying to http://localhost:5001/api/v1/auth/login HTTP/2 RequestVersionOrLower 
+2025-07-09 15:41:33.006 +03:00 [INF] Received HTTP/1.1 response 401.
+2025-07-09 15:41:33.019 +03:00 [INF] Executed endpoint 'auth-route-v1'
+2025-07-09 15:41:33.022 +03:00 [INF] Request f28d81c2-ca90-4dc7-9a61-fd1274443d9e completed: 401 in 410ms
+2025-07-09 15:41:33.026 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/v1/auth/login - 401 0 null 423.3262ms
+2025-07-09 15:41:43.565 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/v1/auth/login - application/json 70
+2025-07-09 15:41:43.574 +03:00 [INF] Request e3956d81-30ba-4182-8def-13a76b78ece7: POST /api/v1/auth/login from ::1
+2025-07-09 15:41:43.579 +03:00 [INF] Executing endpoint 'auth-route-v1'
+2025-07-09 15:41:43.581 +03:00 [INF] Proxying to http://localhost:5001/api/v1/auth/login HTTP/2 RequestVersionOrLower 
+2025-07-09 15:41:43.599 +03:00 [INF] Received HTTP/1.1 response 401.
+2025-07-09 15:41:43.606 +03:00 [INF] Executed endpoint 'auth-route-v1'
+2025-07-09 15:41:43.608 +03:00 [INF] Request e3956d81-30ba-4182-8def-13a76b78ece7 completed: 401 in 35ms
+2025-07-09 15:41:43.612 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/v1/auth/login - 401 0 null 47.1293ms
+2025-07-09 15:45:53.731 +03:00 [INF] Application is shutting down...

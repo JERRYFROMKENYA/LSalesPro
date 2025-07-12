@@ -33,4 +33,8 @@ public interface IOrderService
     // Order validation
     Task<bool> ValidateOrderAsync(Guid id);
     Task<bool> CheckInventoryAvailabilityAsync(Guid productId, int quantity, Guid? warehouseId = null);
+
+    // New methods for API usage
+    Task<OrderResultDto> UpdateStatusAsync(UpdateOrderStatusDto dto);
+    Task<OrderTotalPreviewDto> CalculateTotalAsync(CalculateOrderTotalDto dto);
 }

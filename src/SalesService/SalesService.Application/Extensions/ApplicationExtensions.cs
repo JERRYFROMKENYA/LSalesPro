@@ -21,6 +21,7 @@ public static class ApplicationExtensions
         // Register application services
         services.AddScoped<ICustomerService, CustomerService>();
         services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IReportsService, ReportsService>();
         
         // Register service clients

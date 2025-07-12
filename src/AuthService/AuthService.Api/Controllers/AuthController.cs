@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using AuthService.Application.Interfaces;
 using AuthService.Application.DTOs;
+using AuthService.Domain.Exceptions;
 
 namespace AuthService.Api.Controllers;
 
@@ -12,15 +13,18 @@ public class AuthController : ControllerBase
     private readonly IAuthService _authService;
     private readonly IUserService _userService;
     private readonly ILogger<AuthController> _logger;
+    private readonly IPasswordService _passwordService;
 
     public AuthController(
         IAuthService authService,
         IUserService userService,
-        ILogger<AuthController> logger)
+        ILogger<AuthController> logger,
+        IPasswordService passwordService)
     {
         _authService = authService;
         _userService = userService;
         _logger = logger;
+        _passwordService = passwordService;
     }
 
     /// <summary>
@@ -48,6 +52,11 @@ public class AuthController : ControllerBase
         {
             _logger.LogWarning(ex, "Failed login attempt for username: {Username}", loginDto.Username);
             return Unauthorized("Invalid credentials");
+        }
+        catch (UserNotFoundException ex)
+        {
+            _logger.LogWarning(ex, "Account not found for username: {Username}", loginDto.Username);
+            return Unauthorized(new { code = 401, message = "not found" });
         }
         catch (Exception ex)
         {
@@ -141,7 +150,7 @@ public class AuthController : ControllerBase
                 return BadRequest(ModelState);
             }
 
-            var result = await _authService.RequestPasswordResetAsync(resetPasswordDto);
+            await _authService.RequestPasswordResetAsync(resetPasswordDto);
             
             // Always return success for security reasons (don't reveal if email exists)
             return Ok(new { message = "If the email address exists, you will receive password reset instructions." });
@@ -210,6 +219,45 @@ public class AuthController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error during logout");
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    /// <summary>
+    /// Register a new user account
+    /// </summary>
+    /// <param name="registerDto">User registration details</param>
+    /// <returns>Success message</returns>
+    [HttpPost("register")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var existingUser = await _userService.GetUserByUsernameAsync(registerDto.Username);
+            if (existingUser != null)
+            {
+                return Conflict(new { message = "User already exists." });
+            }
+
+            if (!_passwordService.ValidatePassword(registerDto.Password))
+            {
+                return BadRequest("Password does not meet complexity requirements.");
+            }
+
+            await _userService.RegisterAsync(registerDto);
+            return CreatedAtAction(nameof(Login), new { username = registerDto.Username }, "Account created successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during registration for username: {Username}", registerDto.Username);
             return StatusCode(500, "Internal server error");
         }
     }

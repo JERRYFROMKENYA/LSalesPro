@@ -1,211 +1,160 @@
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using AuthService.Application.Services;
 using AuthService.Domain.Entities;
 using AuthService.Infrastructure.Data;
-using AuthService.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System.Security.Claims;
+using Xunit;
 
 namespace AuthService.Tests;
 
-public class JwtTokenServiceTest
+public class JwtTokenServiceTest : IDisposable
 {
-    public static async Task RunJwtTokenTests()
+    private readonly AuthDbContext _context;
+    private readonly JwtTokenService _jwtTokenService;
+    private readonly User _testUser;
+
+    public JwtTokenServiceTest()
     {
-        Console.WriteLine("🚀 Starting JWT Token Service Test...");
-Console.WriteLine("=============================================================");
-
-try
-{
-    // Setup configuration for JWT service
-    var configBuilder = new ConfigurationBuilder();
-    configBuilder.AddInMemoryCollection(new Dictionary<string, string?>
-    {
-        ["Jwt:SecretKey"] = "your-super-secret-key-that-is-at-least-32-characters-long-for-testing!",
-        ["Jwt:Issuer"] = "LSalesPro.AuthService.Test",
-        ["Jwt:Audience"] = "LSalesPro.Services.Test",
-        ["Jwt:AccessTokenExpirationMinutes"] = "30",
-        ["Jwt:RefreshTokenExpirationDays"] = "7"
-    });
-    var configuration = configBuilder.Build();
-
-    // Setup in-memory database
-    var options = new DbContextOptionsBuilder<AuthDbContext>()
-        .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-        .Options;
-    
-    using var context = new AuthDbContext(options);
-    context.Database.EnsureCreated();
-    
-    Console.WriteLine("✅ Database and configuration setup successfully");
-
-    // Setup services
-    var userRepository = new UserRepository(context);
-    var jwtTokenService = new JwtTokenService(configuration);
-
-    Console.WriteLine("✅ JWT Token Service initialized successfully");
-
-    // Create a test user with roles
-    var testUser = new User
-    {
-        Id = Guid.NewGuid(),
-        Username = "jwttest001",
-        Email = "jwttest@example.com",
-        PasswordHash = "hashedpassword123",
-        FirstName = "JWT",
-        LastName = "TestUser",
-        IsActive = true,
-        CreatedAt = DateTime.UtcNow
-    };
-
-    // Add user to context
-    context.Users.Add(testUser);
-    await context.SaveChangesAsync();
-
-    // Get the seeded roles
-    var salesManagerRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Sales Manager");
-    var salesRepRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Sales Representative");
-
-    if (salesManagerRole != null)
-    {
-        // Assign Sales Manager role to test user
-        var userRole = new UserRole
+        var configBuilder = new ConfigurationBuilder();
+        configBuilder.AddInMemoryCollection(new Dictionary<string, string?>
         {
-            UserId = testUser.Id,
-            RoleId = salesManagerRole.Id,
-            AssignedAt = DateTime.UtcNow
+            ["Jwt:SecretKey"] = "your-super-secret-key-that-is-at-least-32-characters-long-for-testing!",
+            ["Jwt:Issuer"] = "LSalesPro.AuthService.Test",
+            ["Jwt:Audience"] = "LSalesPro.Services.Test",
+            ["Jwt:AccessTokenExpirationMinutes"] = "30",
+            ["Jwt:RefreshTokenExpirationDays"] = "7"
+        });
+        var configuration = configBuilder.Build();
+
+        var options = new DbContextOptionsBuilder<AuthDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+        
+        _context = new AuthDbContext(options);
+        _context.Database.EnsureCreated();
+
+        _jwtTokenService = new JwtTokenService(configuration);
+
+        _testUser = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "jwttest001",
+            Email = "jwttest@example.com",
+            PasswordHash = "hashedpassword123",
+            FirstName = "JWT",
+            LastName = "TestUser",
+            IsActive = true,
+            CreatedAt = DateTime.UtcNow
         };
-        context.UserRoles.Add(userRole);
-        await context.SaveChangesAsync();
-        Console.WriteLine($"✅ Assigned role '{salesManagerRole.Name}' to test user");
+        _context.Users.Add(_testUser);
+        _context.SaveChanges();
     }
 
-    // Reload user with roles and permissions
-    var userWithRoles = await context.Users
-        .Include(u => u.UserRoles)
-        .ThenInclude(ur => ur.Role)
-        .ThenInclude(r => r.RolePermissions)
-        .ThenInclude(rp => rp.Permission)
-        .FirstOrDefaultAsync(u => u.Id == testUser.Id);
-
-    if (userWithRoles == null)
+    [Fact]
+    public async Task GenerateAccessTokenAsync_WithValidUser_ReturnsValidToken()
     {
-        Console.WriteLine("❌ Failed to load user with roles");
-        return;
+        // Act
+        var accessToken = await _jwtTokenService.GenerateAccessTokenAsync(_testUser);
+
+        // Assert
+        Assert.False(string.IsNullOrEmpty(accessToken));
     }
 
-    Console.WriteLine("=============================================================");
-
-    // Test 1: Generate Access Token
-    Console.WriteLine("🔧 Testing JWT Access Token Generation...");
-    var accessToken = await jwtTokenService.GenerateAccessTokenAsync(userWithRoles);
-    
-    if (string.IsNullOrEmpty(accessToken))
+    [Fact]
+    public async Task ValidateTokenAsync_WithValidToken_ReturnsClaimsPrincipal()
     {
-        Console.WriteLine("❌ Access token generation failed");
-        return;
-    }
-    
-    Console.WriteLine("✅ Access token generated successfully");
-    Console.WriteLine($"   Token length: {accessToken.Length} characters");
-    Console.WriteLine($"   Token preview: {accessToken.Substring(0, Math.Min(50, accessToken.Length))}...");
+        // Arrange
+        var accessToken = await _jwtTokenService.GenerateAccessTokenAsync(_testUser);
 
-    // Test 2: Validate Access Token
-    Console.WriteLine("\n🔧 Testing JWT Access Token Validation...");
-    var claimsPrincipal = await jwtTokenService.ValidateTokenAsync(accessToken);
-    
-    if (claimsPrincipal == null)
+        // Act
+        var claimsPrincipal = await _jwtTokenService.ValidateTokenAsync(accessToken);
+
+        // Assert
+        Assert.NotNull(claimsPrincipal);
+        Assert.Equal(_testUser.Id.ToString(), claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        Assert.Equal(_testUser.Username, claimsPrincipal.FindFirst(ClaimTypes.Name)?.Value);
+    }
+
+    [Fact]
+    public async Task GenerateRefreshTokenAsync_WithValidUser_ReturnsValidRefreshToken()
     {
-        Console.WriteLine("❌ Access token validation failed");
-        return;
-    }
-    
-    Console.WriteLine("✅ Access token validation successful");
-    
-    // Check claims
-    var userIdClaim = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-    var usernameClaim = claimsPrincipal.FindFirst(ClaimTypes.Name)?.Value;
-    var emailClaim = claimsPrincipal.FindFirst(ClaimTypes.Email)?.Value;
-    var roleClaims = claimsPrincipal.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();
-    
-    Console.WriteLine($"   User ID: {userIdClaim}");
-    Console.WriteLine($"   Username: {usernameClaim}");
-    Console.WriteLine($"   Email: {emailClaim}");
-    Console.WriteLine($"   Roles: {string.Join(", ", roleClaims)}");
+        // Act
+        var refreshToken = await _jwtTokenService.GenerateRefreshTokenAsync(_testUser);
 
-    // Verify claims match user data
-    if (userIdClaim != testUser.Id.ToString() || 
-        usernameClaim != testUser.Username || 
-        emailClaim != testUser.Email)
+        // Assert
+        Assert.NotNull(refreshToken);
+        Assert.False(string.IsNullOrEmpty(refreshToken.Token));
+        Assert.Equal(_testUser.Id, refreshToken.UserId);
+    }
+
+    [Fact]
+    public async Task ValidateRefreshTokenAsync_WithValidToken_ReturnsTrue()
     {
-        Console.WriteLine("❌ Token claims don't match user data");
-        return;
-    }
-    
-    Console.WriteLine("✅ Token claims verified correctly");
+        // Arrange
+        var refreshToken = await _jwtTokenService.GenerateRefreshTokenAsync(_testUser);
+        _context.RefreshTokens.Add(refreshToken);
+        await _context.SaveChangesAsync();
 
-    // Test 3: Generate Refresh Token
-    Console.WriteLine("\n🔧 Testing Refresh Token Generation...");
-    var refreshToken = await jwtTokenService.GenerateRefreshTokenAsync(userWithRoles);
-    
-    if (refreshToken == null || string.IsNullOrEmpty(refreshToken.Token))
+        // Act
+        var isValid = await _jwtTokenService.ValidateRefreshTokenAsync(refreshToken.Token, _testUser.Id);
+
+        // Assert
+        Assert.True(isValid);
+    }
+
+    [Fact]
+    public async Task ValidateTokenAsync_WithInvalidToken_ReturnsNull()
     {
-        Console.WriteLine("❌ Refresh token generation failed");
-        return;
-    }
-    
-    Console.WriteLine("✅ Refresh token generated successfully");
-    Console.WriteLine($"   Token: {refreshToken.Token}");
-    Console.WriteLine($"   Expires at: {refreshToken.ExpiresAt}");
-    Console.WriteLine($"   User ID: {refreshToken.UserId}");
+        // Act
+        var claimsPrincipal = await _jwtTokenService.ValidateTokenAsync("invalid.token.here");
 
-    // Test 4: Validate Refresh Token
-    Console.WriteLine("\n🔧 Testing Refresh Token Validation...");
-    var isRefreshTokenValid = await jwtTokenService.ValidateRefreshTokenAsync(refreshToken.Token, testUser.Id);
-    
-    if (!isRefreshTokenValid)
+        // Assert
+        Assert.Null(claimsPrincipal);
+    }
+
+    [Fact]
+    public async Task GenerateAccessTokenAsync_ShouldIncludeClaims_WhenUserIsValid()
     {
-        Console.WriteLine("❌ Refresh token validation failed");
-        return;
-    }
-    
-    Console.WriteLine("✅ Refresh token validation successful");
+        // Arrange
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "testuser",
+            Email = "testuser@example.com",
+            UserRoles = new List<UserRole>
+            {
+                new UserRole { Role = new Role { Name = "Sales Manager" } }
+            }
+        };
 
-    // Test 5: Invalid Token Validation
-    Console.WriteLine("\n🔧 Testing Invalid Token Rejection...");
-    var invalidTokenValidation = await jwtTokenService.ValidateTokenAsync("invalid.token.here");
-    
-    if (invalidTokenValidation != null)
+        // Act
+        var token = await _jwtTokenService.GenerateAccessTokenAsync(user);
+        var claimsPrincipal = await _jwtTokenService.ValidateTokenAsync(token);
+
+        // Assert
+        Assert.NotNull(claimsPrincipal);
+        Assert.Equal(user.Id.ToString(), claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        Assert.Equal(user.Username, claimsPrincipal.FindFirst(ClaimTypes.Name)?.Value);
+        Assert.Equal(user.Email, claimsPrincipal.FindFirst(ClaimTypes.Email)?.Value);
+        Assert.Contains("Sales Manager", claimsPrincipal.FindFirst("role")?.Value);
+    }
+
+    [Fact]
+    public async Task ValidateTokenAsync_ShouldReturnNull_WhenTokenIsInvalid()
     {
-        Console.WriteLine("❌ Invalid token was incorrectly validated");
-        return;
+        // Act
+        var claimsPrincipal = await _jwtTokenService.ValidateTokenAsync("invalid-token");
+
+        // Assert
+        Assert.Null(claimsPrincipal);
     }
-    
-    Console.WriteLine("✅ Invalid token correctly rejected");
 
-    // Test 6: Token Revocation
-    Console.WriteLine("\n🔧 Testing Token Revocation...");
-    await jwtTokenService.RevokeRefreshTokenAsync(refreshToken.Token);
-    Console.WriteLine("✅ Token revocation completed (placeholder implementation)");
-
-    Console.WriteLine("=============================================================");
-    Console.WriteLine("🎉 ALL JWT TOKEN SERVICE TESTS PASSED!");
-    Console.WriteLine("📋 JWT Token Service is working correctly:");
-    Console.WriteLine("   ✅ Access token generation with claims");
-    Console.WriteLine("   ✅ Token validation and claims extraction");
-    Console.WriteLine("   ✅ Refresh token generation");
-    Console.WriteLine("   ✅ Refresh token validation");
-    Console.WriteLine("   ✅ Invalid token rejection");
-    Console.WriteLine("   ✅ Token revocation mechanism");
-    Console.WriteLine("=============================================================");
-}
-catch (Exception ex)
-{
-    Console.WriteLine("=============================================================");
-    Console.WriteLine("❌ JWT TOKEN SERVICE TEST FAILED!");
-    Console.WriteLine($"Error: {ex.Message}");
-    Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-    Console.WriteLine("=============================================================");
-}
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 }

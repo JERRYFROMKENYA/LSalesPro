@@ -19,10 +19,6 @@ public class RefreshTokenDto
     public string RefreshToken { get; set; } = string.Empty;
 }
 
-public class ResetPasswordDto
-{
-    public string Email { get; set; } = string.Empty;
-}
 
 public class ResetPasswordConfirmDto
 {

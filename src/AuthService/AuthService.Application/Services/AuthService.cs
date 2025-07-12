@@ -1,7 +1,10 @@
 using AuthService.Application.DTOs;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
+using AuthService.Domain.Exceptions;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace AuthService.Application.Services;
 
@@ -13,6 +16,7 @@ public class AuthService : IAuthService
     private readonly IPasswordService _passwordService;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly ILogger<AuthService> _logger;
+    private readonly IMemoryCache _memoryCache;
 
     public AuthService(
         IUserRepository userRepository,
@@ -20,7 +24,8 @@ public class AuthService : IAuthService
         IPasswordResetTokenRepository passwordResetTokenRepository,
         IPasswordService passwordService,
         IJwtTokenService jwtTokenService,
-        ILogger<AuthService> logger)
+        ILogger<AuthService> logger,
+        IMemoryCache memoryCache)
     {
         _userRepository = userRepository;
         _refreshTokenRepository = refreshTokenRepository;
@@ -28,6 +33,7 @@ public class AuthService : IAuthService
         _passwordService = passwordService;
         _jwtTokenService = jwtTokenService;
         _logger = logger;
+        _memoryCache = memoryCache;
     }
 
     public async Task<LoginResponseDto> LoginAsync(LoginDto loginDto)
@@ -39,7 +45,8 @@ public class AuthService : IAuthService
         if (user == null)
         {
             _logger.LogWarning("User not found: {Username}", loginDto.Username);
-            throw new UnauthorizedAccessException("Invalid credentials");
+            throw new UserNotFoundException(loginDto.Username);
+            
         }
 
         // Verify password
@@ -65,28 +72,33 @@ public class AuthService : IAuthService
 
         _logger.LogInformation("Successful login for user: {Username}", loginDto.Username);
 
+        var userDto = new UserDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            IsActive = user.IsActive,
+            CreatedAt = user.CreatedAt,
+            UpdatedAt = user.UpdatedAt,
+            Roles = user.GetRoles().Select(r => new RoleDto
+            {
+                Id = r.Id,
+                Name = r.Name,
+                Description = r.Description ?? string.Empty
+            }).ToList()
+        };
+
+        // Cache user data
+        _memoryCache.Set(user.Id, userDto, TimeSpan.FromMinutes(30)); // Cache for 30 minutes
+
         return new LoginResponseDto
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken.Token,
             ExpiresAt = refreshToken.ExpiresAt,
-            User = new UserDto
-            {
-                Id = user.Id,
-                Username = user.Username,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                IsActive = user.IsActive,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt,
-                Roles = user.GetRoles().Select(r => new RoleDto
-                {
-                    Id = r.Id,
-                    Name = r.Name,
-                    Description = r.Description ?? string.Empty
-                }).ToList()
-            }
+            User = userDto
         };
     }
 
@@ -128,28 +140,33 @@ public class AuthService : IAuthService
 
         _logger.LogInformation("Successful token refresh for user: {UserId}", user.Id);
 
+        var userDto = new UserDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            IsActive = user.IsActive,
+            CreatedAt = user.CreatedAt,
+            UpdatedAt = user.UpdatedAt,
+            Roles = user.GetRoles().Select(r => new RoleDto
+            {
+                Id = r.Id,
+                Name = r.Name,
+                Description = r.Description ?? string.Empty
+            }).ToList()
+        };
+
+        // Update cached user data
+        _memoryCache.Set(user.Id, userDto, TimeSpan.FromMinutes(30)); // Cache for 30 minutes
+
         return new LoginResponseDto
         {
             AccessToken = newAccessToken,
             RefreshToken = newRefreshToken.Token,
             ExpiresAt = newRefreshToken.ExpiresAt,
-            User = new UserDto
-            {
-                Id = user.Id,
-                Username = user.Username,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                IsActive = user.IsActive,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt,
-                Roles = user.GetRoles().Select(r => new RoleDto
-                {
-                    Id = r.Id,
-                    Name = r.Name,
-                    Description = r.Description ?? string.Empty
-                }).ToList()
-            }
+            User = userDto
         };
     }
 
@@ -162,6 +179,9 @@ public class AuthService : IAuthService
         {
             await _refreshTokenRepository.DeleteAsync(storedToken.Id);
             _logger.LogInformation("Refresh token invalidated for user: {UserId}", storedToken.UserId);
+
+            // Invalidate user cache
+            _memoryCache.Remove(storedToken.UserId);
         }
     }
 
@@ -176,6 +196,9 @@ public class AuthService : IAuthService
         }
 
         _logger.LogInformation("All refresh tokens invalidated for user: {UserId}", userId);
+
+        // Invalidate user cache
+        _memoryCache.Remove(userId);
     }
 
     public async Task<bool> RequestPasswordResetAsync(ResetPasswordDto resetPasswordDto)
@@ -187,7 +210,7 @@ public class AuthService : IAuthService
         {
             // Don't reveal if email exists for security
             _logger.LogInformation("Password reset requested for non-existent email: {Email}", resetPasswordDto.Email);
-            return true;
+            return false; // Changed to false to indicate failure
         }
 
         // Generate a secure reset token
@@ -202,7 +225,7 @@ public class AuthService : IAuthService
 
         await _passwordResetTokenRepository.CreateAsync(passwordResetToken);
         
-        // In a real application, you would send an email here
+        // Send email with reset token (email service integration required)
         _logger.LogInformation("Password reset token generated for user: {UserId}, Token: {Token}", user.Id, resetToken);
         
         return true;
@@ -256,6 +279,9 @@ public class AuthService : IAuthService
         resetToken.UsedAt = DateTime.UtcNow;
         await _passwordResetTokenRepository.UpdateAsync(resetToken);
 
+        // Invalidate user cache
+        _memoryCache.Remove(user.Id);
+
         _logger.LogInformation("Password reset completed for user: {UserId}", user.Id);
         
         return true;
@@ -265,8 +291,8 @@ public class AuthService : IAuthService
     {
         try
         {
-            var principal = await _jwtTokenService.ValidateTokenAsync(token);
-            return principal != null;
+            var isValid = _jwtTokenService.ValidateToken(token);
+            return isValid;
         }
         catch
         {
@@ -278,16 +304,30 @@ public class AuthService : IAuthService
     {
         try
         {
+            var isValid = _jwtTokenService.ValidateToken(token);
+            if (!isValid)
+            {
+                return null;
+            }
+
+            // Since ValidateToken returns bool, we need to re-validate to get claims
             var principal = await _jwtTokenService.ValidateTokenAsync(token);
             if (principal == null)
             {
                 return null;
             }
 
-            var userIdClaim = principal.FindFirst("user_id")?.Value;
+            var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
             {
                 return null;
+            }
+
+            // Try to get user from cache
+            if (_memoryCache.TryGetValue(userId, out UserDto? cachedUser))
+            {
+                _logger.LogInformation("User {UserId} found in cache.", userId);
+                return cachedUser;
             }
 
             var user = await _userRepository.GetByIdAsync(userId);
@@ -296,7 +336,7 @@ public class AuthService : IAuthService
                 return null;
             }
 
-            return new UserDto
+            var userDto = new UserDto
             {
                 Id = user.Id,
                 Username = user.Username,
@@ -313,6 +353,11 @@ public class AuthService : IAuthService
                     Description = r.Description ?? string.Empty
                 }).ToList()
             };
+
+            // Cache user data
+            _memoryCache.Set(userId, userDto, TimeSpan.FromMinutes(30)); // Cache for 30 minutes
+
+            return userDto;
         }
         catch (Exception ex)
         {

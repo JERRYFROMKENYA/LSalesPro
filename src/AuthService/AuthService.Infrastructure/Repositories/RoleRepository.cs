@@ -84,4 +84,10 @@ public class RoleRepository : IRoleRepository
             .ThenInclude(rp => rp.Permission)
             .ToListAsync();
     }
+
+    public async Task AddAsync(Role role)
+    {
+        _context.Roles.Add(role);
+        await _context.SaveChangesAsync();
+    }
 }

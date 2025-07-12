@@ -981,6 +981,26 @@ public class OrderService : IOrderService
         }
     }
 
+    // Stub implementations for new interface methods
+    public async Task<OrderResultDto> UpdateStatusAsync(UpdateOrderStatusDto dto)
+    {
+        // TODO: Implement actual logic
+        return new OrderResultDto { Success = false, Message = "Not implemented" };
+    }
+
+    public async Task<OrderTotalPreviewDto> CalculateTotalAsync(CalculateOrderTotalDto dto)
+    {
+        // TODO: Implement actual logic
+        return new OrderTotalPreviewDto
+        {
+            
+            Subtotal = 0,
+            Discount = 0,
+            Tax = 0,
+            Total = 0
+        };
+    }
+
     private string GenerateOrderNumber()
     {
         // Generate order number with format: ORD-YYYYMMDDxxxx

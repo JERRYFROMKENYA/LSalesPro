@@ -58,8 +58,7 @@ public class SalesDbContext : DbContext
         modelBuilder.Entity<Notification>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.HasIndex(e => e.RecipientId);
-            entity.HasIndex(e => e.RecipientEmail);
+            entity.HasIndex(e => e.UserId);
         });
     }
 }

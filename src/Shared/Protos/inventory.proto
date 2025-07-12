@@ -113,6 +113,7 @@ message ProductInfo {
   string category = 6;
   bool is_active = 7;
   repeated WarehouseStock stock_levels = 8;
+  double tax_rate = 9;
 }
 
 message StockUpdate {

@@ -250,4 +250,40 @@ public class InventoryGrpcService : Shared.Contracts.Inventory.InventoryService.
             };
         }
     }
+
+    public override async Task<ReleaseStockResponse> ReleaseStock(
+        ReleaseStockRequest request, 
+        ServerCallContext context)
+    {
+        _logger.LogInformation("🔓 gRPC: ReleaseStock - ReservationId: {ReservationId}", request.ReservationId);
+
+        try
+        {
+            if (string.IsNullOrEmpty(request.ReservationId))
+            {
+                return new ReleaseStockResponse
+                {
+                    Success = false,
+                    ErrorMessage = "Reservation ID is required"
+                };
+            }
+
+            var result = await _stockReservationService.ReleaseReservationAsync(request.ReservationId);
+
+            return new ReleaseStockResponse
+            {
+                Success = result.Success,
+                ErrorMessage = result.Success ? string.Empty : result.Message
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "❌ gRPC Error releasing stock for ReservationId: {ReservationId}", request.ReservationId);
+            return new ReleaseStockResponse
+            {
+                Success = false,
+                ErrorMessage = $"Internal server error: {ex.Message}"
+            };
+        }
+    }
 }

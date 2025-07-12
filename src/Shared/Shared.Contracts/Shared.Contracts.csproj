@@ -17,6 +17,9 @@
 
   <ItemGroup>
     <Protobuf Include="../Protos/*.proto" GrpcServices="Both" />
+    <Protobuf Update="..\Protos\AuthService.proto">
+      <Link>Protos\AuthService.proto</Link>
+    </Protobuf>
   </ItemGroup>
 
 </Project>

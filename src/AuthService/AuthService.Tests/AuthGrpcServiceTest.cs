@@ -1,49 +1,52 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using AuthService.Infrastructure.Data;
+using Microsoft.Extensions.Logging;
+using AuthService.Api.Services;
+using AuthService.Application.DTOs;
 using AuthService.Application.Interfaces;
 using AuthService.Application.Services;
+using AuthService.Domain.Entities;
+using AuthService.Infrastructure.Data;
 using AuthService.Infrastructure.Repositories;
 using AuthService.Infrastructure.Services;
-using Microsoft.EntityFrameworkCore;
 using Shared.Contracts.Auth;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Xunit;
+using PasswordService = AuthService.Application.Services.PasswordService;
 
 namespace AuthService.Tests;
 
-public class AuthGrpcServiceDirectTest : IDisposable
+public class AuthGrpcServiceTest : IDisposable
 {
     private readonly IServiceScope _scope;
     private readonly AuthDbContext _context;
     private readonly IUserService _userService;
     private readonly IJwtTokenService _jwtTokenService;
-    private readonly AuthService.Api.Services.AuthGrpcService _grpcService;
+    private readonly AuthGrpcService _grpcService;
 
-    public AuthGrpcServiceDirectTest()
+    public AuthGrpcServiceTest()
     {
         var services = new ServiceCollection();
         
-        // Configure test database
         services.AddDbContext<AuthDbContext>(options =>
             options.UseInMemoryDatabase($"AuthServiceDb_Test_{Guid.NewGuid()}"));
 
-        // Register repositories
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IPermissionRepository, PermissionRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IPasswordResetTokenRepository, PasswordResetTokenRepository>();
 
-        // Register services
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IPasswordService, PasswordService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IAuthService, AuthService.Application.Services.AuthService>();
 
-        // Add logging
         services.AddLogging(builder => builder.AddConsole());
 
-        // Add configuration
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
@@ -62,140 +65,93 @@ public class AuthGrpcServiceDirectTest : IDisposable
         _context = _scope.ServiceProvider.GetRequiredService<AuthDbContext>();
         _userService = _scope.ServiceProvider.GetRequiredService<IUserService>();
         _jwtTokenService = _scope.ServiceProvider.GetRequiredService<IJwtTokenService>();
-
-        // Create gRPC service instance
-        _grpcService = new AuthService.Api.Services.AuthGrpcService(
+        _grpcService = new AuthGrpcService(
             _scope.ServiceProvider.GetRequiredService<IAuthService>(),
             _userService,
             _jwtTokenService,
-            _scope.ServiceProvider.GetRequiredService<ILogger<AuthService.Api.Services.AuthGrpcService>>()
-        );
-
-        // Ensure database is created
-        _context.Database.EnsureCreated();
+            _scope.ServiceProvider.GetRequiredService<ILogger<AuthGrpcService>>());
     }
 
-    public async Task<bool> TestValidateTokenMethod()
+    [Fact]
+    public async Task ValidateToken_ShouldReturnValidResponse_WhenTokenIsValid()
     {
-        try
+        // Arrange
+        var validToken = await _jwtTokenService.GenerateAccessTokenAsync(new User
         {
-            // Create a test user first
-            var createUserDto = new AuthService.Application.DTOs.CreateUserDto
-            {
-                Username = "grpctest",
-                Email = "grpctest@example.com",
-                Password = "TestPassword123!",
-                FirstName = "Grpc",
-                LastName = "Test",
-                RoleIds = new List<Guid>()
-            };
+            Id = Guid.NewGuid(),
+            Username = "test-user",
+            Email = "test@example.com",
+            FirstName = "Test",
+            LastName = "User"
+        });
 
-            var user = await _userService.CreateUserAsync(createUserDto);
-            
-            // Generate a JWT token for the user
-            var userEntity = new AuthService.Domain.Entities.User
-            {
-                Id = user.Id,
-                Username = user.Username,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                IsActive = user.IsActive
-            };
+        var request = new ValidateTokenRequest { Token = validToken };
 
-            var token = await _jwtTokenService.GenerateAccessTokenAsync(userEntity);
+        // Act
+        var response = await _grpcService.ValidateToken(request, null);
 
-            // Test ValidateToken - we'll test the core logic rather than the gRPC infrastructure
-            Console.WriteLine($"Testing ValidateToken with token: {token[..20]}...");
-            Console.WriteLine($"User created: {user.Username} (ID: {user.Id})");
-
-            return !string.IsNullOrEmpty(token);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error testing ValidateToken: {ex.Message}");
-            return false;
-        }
+        // Assert
+        Assert.True(response.IsValid);
+        Assert.Equal("test-user-id", response.UserId);
     }
 
-    public async Task<bool> TestGetUserPermissionsMethod()
+    [Fact]
+    public async Task GetUserPermissions_ShouldReturnPermissions_WhenUserExists()
     {
-        try
+        // Arrange
+        var userId = Guid.NewGuid();
+        _context.Users.Add(new User
         {
-            // Create a test user
-            var createUserDto = new AuthService.Application.DTOs.CreateUserDto
+            Id = userId,
+            Username = "test-user",
+            Email = "test@example.com",
+            UserRoles = new List<UserRole>
             {
-                Username = "grpctest2",
-                Email = "grpctest2@example.com",
-                Password = "TestPassword123!",
-                FirstName = "Grpc",
-                LastName = "Test2",
-                RoleIds = new List<Guid>()
-            };
-
-            var user = await _userService.CreateUserAsync(createUserDto);
-
-            Console.WriteLine($"Testing GetUserPermissions for user: {user.Username} (ID: {user.Id})");
-
-            // Verify user exists and can be retrieved
-            var retrievedUser = await _userService.GetUserByIdAsync(user.Id);
-            if (retrievedUser == null)
-            {
-                Console.WriteLine("User retrieval failed");
-                return false;
+                new UserRole { Role = new Role { Name = "Sales Manager", RolePermissions = new List<RolePermission> { new RolePermission { Permission = new Permission { Name = "test-permission" } } } } }
             }
+        });
+        await _context.SaveChangesAsync();
 
-            Console.WriteLine($"User successfully retrieved: {retrievedUser.Username}");
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error testing GetUserPermissions: {ex.Message}");
-            return false;
-        }
+        var request = new GetUserPermissionsRequest { UserId = userId.ToString() };
+
+        // Act
+        var response = await _grpcService.GetUserPermissions(request, null);
+
+        // Assert
+        Assert.Contains("test-permission", response.Permissions);
     }
 
-    public async Task<bool> TestGetUserByIdMethod()
+    [Fact]
+    public async Task GetUserById_ShouldReturnUserDetails_WhenUserExists()
     {
-        try
+        // Arrange
+        var userId = Guid.NewGuid();
+        _context.Users.Add(new User
         {
-            // Create a test user
-            var createUserDto = new AuthService.Application.DTOs.CreateUserDto
+            Id = userId,
+            Username = "test-user",
+            Email = "test@example.com",
+            UserRoles = new List<UserRole>
             {
-                Username = "grpctest3",
-                Email = "grpctest3@example.com",
-                Password = "TestPassword123!",
-                FirstName = "Grpc",
-                LastName = "Test3",
-                RoleIds = new List<Guid>()
-            };
-
-            var user = await _userService.CreateUserAsync(createUserDto);
-
-            Console.WriteLine($"Testing GetUserById for user: {user.Username} (ID: {user.Id})");
-
-            // Test that the user can be retrieved by ID
-            var retrievedUser = await _userService.GetUserByIdAsync(user.Id);
-            if (retrievedUser == null)
-            {
-                Console.WriteLine("GetUserById failed - user not found");
-                return false;
+                new UserRole { Role = new Role { Name = "Sales Manager", RolePermissions = new List<RolePermission> { new RolePermission { Permission = new Permission { Name = "test-permission" } } } } }
             }
+        });
+        await _context.SaveChangesAsync();
 
-            bool result = retrievedUser.Username == "grpctest3" && retrievedUser.Email == "grpctest3@example.com";
-            Console.WriteLine($"GetUserById test result: {result}");
-            return result;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error testing GetUserById: {ex.Message}");
-            return false;
-        }
+        var request = new GetUserByIdRequest { UserId = userId.ToString() };
+
+        // Act
+        var response = await _grpcService.GetUserById(request, null);
+
+        // Assert
+        Assert.Equal(userId.ToString(), response.User.Id);
+        Assert.Equal("test-user", response.User.Username);
+        Assert.Equal("test@example.com", response.User.Email);
+        Assert.Contains("Sales Manager", response.User.Roles);
     }
 
     public void Dispose()
     {
-        _context.Dispose();
         _scope.Dispose();
     }
 }
